@@ -13,6 +13,7 @@ import Committee from './pages/Committee';
 import Contact from './pages/Contact';
 import Media from './pages/Media';
 import Gallery from './pages/Gallery';
+/* WelcomeSplash removed: splash flow disabled by request */
 
 function AnimatedRoutes() {
   const location = useLocation();

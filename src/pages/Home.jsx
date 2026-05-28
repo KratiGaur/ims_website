@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import OptimizedImage from '../components/OptimizedImage';
 import BareillyAttractionCard from '../components/BareillyAttractionCard';
 import { bareillyAttractions } from '../data/bareillyAttractions';
-import heroBanner from '../assets/hero.png';
 
 const pageVariants = {
   initial: { opacity: 0, y: 20 },
@@ -91,17 +89,7 @@ export default function Home() {
           transition={{ duration: 0.6, ease: 'easeOut' }}
           className="media-tile neon-outline hero-banner-frame"
         >
-          <OptimizedImage
-            src={heroBanner}
-            alt="YROC Banner"
-            width={1600}
-            height={600}
-            pictureClassName="fit-cover-picture"
-            className="fit-cover-image"
-            fetchPriority="high"
-            loading="eager"
-            sizes="100vw"
-          />
+          <img src="/hero.png" alt="YROC Banner" className="fit-cover-image" />
         </motion.div>
       </motion.section>
 
@@ -236,15 +224,7 @@ export default function Home() {
         viewport={{ once: true, amount: 0.2 }}
       >
         <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="feature-media-frame">
-          <OptimizedImage
-            src={heroBanner}
-            alt="Medical Conference Visuals"
-            width={1600}
-            height={900}
-            pictureClassName="fit-cover-picture"
-            className="fit-cover-image"
-            sizes="100vw"
-          />
+          <img src="/hero.png" alt="Medical Conference Visuals" className="fit-cover-image" />
         </motion.div>
       </motion.section>
 

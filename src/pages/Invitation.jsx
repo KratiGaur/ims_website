@@ -76,7 +76,15 @@ export default function Invitation() {
           </div>
 
           <div className="invitation-layout">
-            <div>
+            <div className="invitation-snapshot-card">
+              <h2 style={{ marginBottom: '14px', color: 'var(--accent)', fontSize: '1.2rem' }}>Conference Snapshot</h2>
+              <p style={{ margin: '0 0 10px', color: 'var(--text-secondary)' }}><strong style={{ color: 'var(--text-primary)' }}>Dates:</strong> January 22-24, 2027</p>
+              <p style={{ margin: '0 0 10px', color: 'var(--text-secondary)' }}><strong style={{ color: 'var(--text-primary)' }}>Venue:</strong> SRMSIMS, Bareilly</p>
+              <p style={{ margin: '0 0 10px', color: 'var(--text-secondary)' }}><strong style={{ color: 'var(--text-primary)' }}>Theme:</strong> Cancer Care Continuum</p>
+              <p style={{ margin: 0, color: 'var(--text-secondary)' }}><strong style={{ color: 'var(--text-primary)' }}>Audience:</strong> Oncologists, physicists, residents, researchers, and allied professionals</p>
+            </div>
+
+            <div className="invitation-writeup">
               <p style={{ color: 'var(--text-secondary)', lineHeight: 1.85 }}>
                 The Department of Radiation Oncology, SRMS Institute of Medical Sciences (SRMSIMS), Bareilly, is honored and delighted to extend a warm invitation to you for YROC 2027, the Young Radiation Oncologists Conference, scheduled to be held from 22nd to 24th January 2027.
               </p>
@@ -87,19 +95,11 @@ export default function Invitation() {
                 The scientific program has been thoughtfully curated to ensure a rich and engaging experience for all participants. Highlights of the conference include:
               </p>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(240px, 100%), 1fr))', gap: '16px', marginBottom: '24px' }}>
+              <div className="invitation-highlights-grid">
                 {highlights.map((item) => (
-                  <div
-                    key={item.title}
-                    style={{
-                      padding: '18px',
-                      background: 'var(--surface-glass)',
-                      border: '1px solid var(--surface-stroke)',
-                      borderRadius: '18px'
-                    }}
-                  >
-                    <h3 style={{ marginBottom: '8px', fontSize: '1.05rem', color: 'var(--accent-primary)' }}>{item.title}</h3>
-                    <p style={{ margin: 0, color: 'var(--text-secondary)', lineHeight: 1.65, fontSize: '0.96rem' }}>{item.text}</p>
+                  <div key={item.title} className="invitation-highlight-bar">
+                    <h3>{item.title}</h3>
+                    <p>{item.text}</p>
                   </div>
                 ))}
               </div>
@@ -129,22 +129,12 @@ export default function Invitation() {
               </div>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
-              <div style={{ padding: '22px', background: 'var(--surface-glass)', border: '1px solid var(--surface-stroke)', borderRadius: '20px' }}>
-                <h2 style={{ marginBottom: '14px', color: 'var(--accent)', fontSize: '1.2rem' }}>Conference Snapshot</h2>
-                <p style={{ margin: '0 0 10px', color: 'var(--text-secondary)' }}><strong style={{ color: 'var(--text-primary)' }}>Dates:</strong> January 22-24, 2027</p>
-                <p style={{ margin: '0 0 10px', color: 'var(--text-secondary)' }}><strong style={{ color: 'var(--text-primary)' }}>Venue:</strong> SRMSIMS, Bareilly</p>
-                <p style={{ margin: '0 0 10px', color: 'var(--text-secondary)' }}><strong style={{ color: 'var(--text-primary)' }}>Theme:</strong> Cancer Care Continuum</p>
-                <p style={{ margin: 0, color: 'var(--text-secondary)' }}><strong style={{ color: 'var(--text-primary)' }}>Audience:</strong> Oncologists, physicists, residents, researchers, and allied professionals</p>
-              </div>
-
-              <div style={{ padding: '22px', background: 'linear-gradient(180deg, rgba(124,58,237,0.18), rgba(6,182,212,0.08))', border: '1px solid rgba(167,139,250,0.24)', borderRadius: '20px' }}>
-                <h2 style={{ marginBottom: '14px', color: 'var(--accent)', fontSize: '1.2rem' }}>Contact</h2>
-                <p style={{ margin: '0 0 6px', fontWeight: 700 }}>Dr Himanshi Khattar</p>
-                <p style={{ margin: '0 0 10px', color: 'var(--text-secondary)' }}>(Organising Secretary)</p>
-                <p style={{ margin: '0 0 8px', color: 'var(--text-secondary)' }}>Phone Number: 7310604738</p>
-                <p style={{ margin: 0, color: 'var(--text-secondary)' }}>Email: To be updated</p>
-              </div>
+            <div className="invitation-contact-card">
+              <h2 style={{ marginBottom: '14px', color: 'var(--accent)', fontSize: '1.2rem' }}>Contact</h2>
+              <p style={{ margin: '0 0 6px', fontWeight: 700 }}>Dr Himanshi Khattar</p>
+              <p style={{ margin: '0 0 10px', color: 'var(--text-secondary)' }}>(Organising Secretary)</p>
+              <p style={{ margin: '0 0 8px', color: 'var(--text-secondary)' }}>Phone Number: 7310604738</p>
+              <p style={{ margin: 0, color: 'var(--text-secondary)' }}>Email: To be updated</p>
             </div>
           </div>
         </div>

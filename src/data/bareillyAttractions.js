@@ -6,6 +6,7 @@ function assetPath(path) {
 
 export const bareillyAttractions = [
   {
+    id: 'jhumka-bareilly',
     title: 'Jhumka Bareilly',
     image: assetPath('bareilly/Jhumka_Bareilly_city_03.jpg.jpeg'),
     label: 'City Icon',
@@ -13,6 +14,7 @@ export const bareillyAttractions = [
       "A contemporary city landmark inspired by Bareilly's famous jhumka identity and one of the most recognizable visual symbols for visitors."
   },
   {
+    id: 'dargah-e-ala-hazrat',
     title: 'Dargah E Ala Hazrat',
     image: assetPath('bareilly/Dargah E Ala Hazrat.jpg.jpeg'),
     label: 'Heritage',
@@ -20,6 +22,7 @@ export const bareillyAttractions = [
       "A revered spiritual destination known across India and abroad, representing Bareilly's layered religious and cultural character."
   },
   {
+    id: 'ahichhatra',
     title: 'Ahichhatra',
     image: assetPath('bareilly/Ahichchhatra Fort Temple Bareilly.jpg.jpeg'),
     label: 'History',
@@ -27,6 +30,7 @@ export const bareillyAttractions = [
       'An important archaeological and historical site near Bareilly that connects the region to an ancient civilizational past.'
   },
   {
+    id: 'trivati-nath-mandir',
     title: 'Trivati Nath Mandir',
     image: assetPath('bareilly/Trivatri Nath  Mandir.jpg.jpeg'),
     label: 'Nath Nagri',
@@ -34,6 +38,7 @@ export const bareillyAttractions = [
       "One of Bareilly's best-known temples, deeply tied to the city's identity as Nath Nagri and popular among devotees year-round."
   },
   {
+    id: 'nath-nagari-bareilly',
     title: 'Nath Nagari Bareilly',
     image: assetPath('bareilly/Nath Nagari Bareilly.jpeg'),
     label: 'Civic Icon',
@@ -41,6 +46,7 @@ export const bareillyAttractions = [
       "A strong local identity marker for Bareilly that reflects the city's spiritual character and its familiar everyday visual memory."
   },
   {
+    id: 'alahazrat-imam-tomb',
     title: 'Alahazrat Imam Tomb',
     image: assetPath('bareilly/Alahazrat Imam  Tomb.jpg.jpeg'),
     label: 'Heritage',
@@ -48,6 +54,7 @@ export const bareillyAttractions = [
       "A significant heritage and spiritual site in Bareilly that anchors the city's religious landscape and public recognition."
   },
   {
+    id: 'hartmann-college-bareilly',
     title: 'Hartmann College Bareilly',
     image: assetPath('bareilly/Hartmann College Bareilly.jpg.jpeg'),
     label: 'Education',
@@ -55,6 +62,7 @@ export const bareillyAttractions = [
       "A familiar institutional landmark that reflects Bareilly's long-standing educational presence and civic memory."
   },
   {
+    id: 'chunne-miyans-lakshmi',
     title: "Chunne Miyan's Lakshmi",
     image: assetPath('bareilly/chunne-miyan-s-lakshmi.jpg.jpeg'),
     label: 'Heritage',
