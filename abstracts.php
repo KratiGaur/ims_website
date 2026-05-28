@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "YROC 13th Conference | Call for Abstracts";
+$pageTitle = "YROC 2027 | Call for Abstracts";
 $currentPage = "abstracts";
 include 'header.php';
 ?>
@@ -8,7 +8,7 @@ include 'header.php';
   <div class="glass-card p-4 p-md-5">
     <h1 class="section-title mb-3">Call for Abstracts</h1>
     <p class="text-slate-300">
-      YROC 13 invites original abstracts from undergraduate students, postgraduate scholars, doctoral candidates, faculty members, and independent researchers. Submissions are welcome across technology, management, social sciences, communication, and interdisciplinary innovation.
+      YROC 2027 invites original abstracts from undergraduate students, postgraduate scholars, doctoral candidates, faculty members, and independent researchers. Submissions are welcome across radiation oncology, clinical oncology, cancer care delivery, palliative care, and allied interdisciplinary areas.
     </p>
 
     <h3 class="mt-4 mb-3">Submission Guidelines</h3>

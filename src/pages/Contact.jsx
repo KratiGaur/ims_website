@@ -16,16 +16,16 @@ export default function Contact() {
     <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} className="content-shell narrow-shell" style={{ textAlign: 'center' }}>
       
       <motion.section
-        style={{ padding: 'clamp(48px, 8vw, 80px) 0 clamp(28px, 5vw, 40px)' }}
+        className="page-section"
         variants={sectionReveal}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
       >
-        <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3.5rem)', marginBottom: '30px' }}>
+        <h1 className="page-title centered" style={{ marginBottom: '30px' }}>
           Contact <span className="gradient-text">Us</span>
         </h1>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', marginBottom: '50px' }}>
+        <p className="page-lead centered" style={{ marginBottom: '50px' }}>
           Have questions about registration, abstract submission, or sponsorships? Our team is here to help.
         </p>
         

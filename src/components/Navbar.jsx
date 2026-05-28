@@ -1,12 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
 export default function Navbar({ theme, onToggleTheme }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  useEffect(() => {
+    document.body.classList.toggle('menu-open', isMenuOpen);
+
+    return () => {
+      document.body.classList.remove('menu-open');
+    };
+  }, [isMenuOpen]);
+
   const links = [
     { name: 'Home', path: '/' },
-    { name: 'About IMS', path: '/about' },
+    { name: 'About', path: '/about' },
+    { name: 'Invitation', path: '/invitation' },
     { name: 'Abstract', path: '/abstract' },
     { name: 'Committee', path: '/committee' },
     { name: 'Media', path: '/media' },
@@ -22,7 +31,7 @@ export default function Navbar({ theme, onToggleTheme }) {
         onClick={() => setIsMenuOpen(false)}
         style={{ fontWeight: 700, fontSize: '1.2rem', letterSpacing: '2px' }}
       >
-        <span className="gradient-text">YROC '26</span>
+        <span className="gradient-text">YROC '27</span>
       </NavLink>
 
       <button

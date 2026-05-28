@@ -1,5 +1,5 @@
 <?php
-$pageTitle = $pageTitle ?? "YROC 13th Conference";
+$pageTitle = $pageTitle ?? "YROC 2027";
 $currentPage = $currentPage ?? "home";
 ?>
 <!DOCTYPE html>
@@ -98,7 +98,7 @@ $currentPage = $currentPage ?? "home";
   <header class="sticky-top" style="z-index: 1050;">
     <nav class="navbar navbar-expand-lg glass-card mx-2 mx-md-4 mt-3 px-3 px-md-4 py-2">
       <a class="navbar-brand brand-font text-white fw-bold fs-4" href="index.php">
-        <i class="fa-solid fa-microchip text-cyan-300 me-2"></i>YROC 13
+        <i class="fa-solid fa-microchip text-cyan-300 me-2"></i>YROC 2027
       </a>
       <button class="navbar-toggler border-0 text-white" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
         <i class="fa-solid fa-bars"></i>
@@ -109,6 +109,7 @@ $currentPage = $currentPage ?? "home";
           <li class="nav-item"><a class="nav-link <?php echo $currentPage === 'about' ? 'active' : ''; ?>" href="about.php">About</a></li>
           <li class="nav-item"><a class="nav-link <?php echo $currentPage === 'vision' ? 'active' : ''; ?>" href="vision.php">Vision</a></li>
           <li class="nav-item"><a class="nav-link <?php echo $currentPage === 'committee' ? 'active' : ''; ?>" href="committee.php">Committee</a></li>
+          <li class="nav-item"><a class="nav-link <?php echo $currentPage === 'invitation' ? 'active' : ''; ?>" href="invitation.php">Invitation</a></li>
           <li class="nav-item"><a class="nav-link <?php echo $currentPage === 'abstracts' ? 'active' : ''; ?>" href="abstracts.php">Abstracts</a></li>
           <li class="nav-item"><a class="nav-link <?php echo $currentPage === 'registration' ? 'active' : ''; ?>" href="registration.php">Registration</a></li>
           <li class="nav-item"><a class="nav-link <?php echo $currentPage === 'sponsors' ? 'active' : ''; ?>" href="sponsors.php">Sponsors</a></li>

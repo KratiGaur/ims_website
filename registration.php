@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "YROC 13th Conference | Registration";
+$pageTitle = "YROC 2027 | Registration";
 $currentPage = "registration";
 include 'header.php';
 ?>

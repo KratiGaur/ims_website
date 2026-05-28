@@ -6,6 +6,7 @@ import Navbar from './components/Navbar';
 
 import Home from './pages/Home';
 import AboutIMS from './pages/AboutIMS';
+import Invitation from './pages/Invitation';
 import Registration from './pages/Registration';
 import Abstract from './pages/Abstract';
 import Committee from './pages/Committee';
@@ -21,6 +22,7 @@ function AnimatedRoutes() {
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<AboutIMS />} />
+        <Route path="/invitation" element={<Invitation />} />
         <Route path="/registration" element={<Registration />} />
         <Route path="/abstract" element={<Abstract />} />
         <Route path="/committee" element={<Committee />} />

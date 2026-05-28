@@ -59,16 +59,16 @@ export default function Gallery() {
   return (
     <MotionDiv initial="initial" animate="in" exit="out" variants={pageVariants} className="content-shell">
       <motion.section
-        style={{ padding: '40px 0 20px' }}
+        className="page-section-tight"
         variants={sectionReveal}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
       >
-        <h1 style={{ fontSize: 'clamp(2.2rem, 6vw, 3.4rem)', marginBottom: '14px' }}>
+        <h1 className="page-title" style={{ marginBottom: '14px' }}>
           <span className="gradient-text">Event Gallery</span>
         </h1>
-        <p style={{ color: 'var(--text-secondary)', lineHeight: 1.7, maxWidth: '800px' }}>
+        <p className="page-lead">
           A dedicated, responsive gallery for conference images. You can add your own photos in this structure and scale it as your archive grows.
         </p>
         <div style={{ marginTop: '14px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
@@ -91,7 +91,7 @@ export default function Gallery() {
       </motion.section>
 
       <motion.section
-        style={{ padding: '30px 0 90px' }}
+        style={{ padding: '20px 0 90px' }}
         className="gallery-grid"
         variants={sectionReveal}
         initial="hidden"

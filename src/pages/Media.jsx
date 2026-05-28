@@ -58,16 +58,16 @@ export default function Media() {
   return (
     <MotionDiv initial="initial" animate="in" exit="out" variants={pageVariants} className="content-shell">
       <motion.section
-        style={{ padding: '40px 0 20px' }}
+        className="page-section-tight"
         variants={sectionReveal}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
       >
-        <h1 style={{ fontSize: 'clamp(2.2rem, 6vw, 3.4rem)', marginBottom: '14px' }}>
+        <h1 className="page-title" style={{ marginBottom: '14px' }}>
           <span className="gradient-text">Media Hub</span>
         </h1>
-        <p style={{ color: 'var(--text-secondary)', lineHeight: 1.7, maxWidth: '800px' }}>
+        <p className="page-lead">
           This section is built for dynamic storytelling with image and video support. Replace these placeholders with your official conference media files anytime.
         </p>
         <div style={{ marginTop: '14px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
@@ -76,7 +76,7 @@ export default function Media() {
       </motion.section>
 
       <motion.section
-        style={{ padding: '30px 0 90px' }}
+        style={{ padding: '20px 0 90px' }}
         className="media-grid"
         variants={sectionReveal}
         initial="hidden"

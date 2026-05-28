@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import OptimizedImage from '../components/OptimizedImage';
+import BareillyAttractionCard from '../components/BareillyAttractionCard';
+import { bareillyAttractions } from '../data/bareillyAttractions';
+import heroBanner from '../assets/hero.png';
 
 const pageVariants = {
   initial: { opacity: 0, y: 20 },
@@ -17,16 +21,17 @@ const sectionReveal = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.75, ease: 'easeOut' } }
 };
 
-const vibeTags = ['Live Panels', 'Future Tech', 'Global Experts', 'Youth Onco Network'];
+const vibeTags = ['Cancer Care Continuum', 'Radiation Oncology', 'Precision Care', 'Young Oncology Forum'];
 const quickStats = [
-  { value: '4K+', label: 'Attendees Expected' },
-  { value: '120+', label: 'Speakers & Moderators' },
-  { value: '35+', label: 'Countries Represented' },
-  { value: '60+', label: 'Interactive Sessions' }
+  { value: '1200', label: 'Hospital Beds' },
+  { value: '100', label: 'Dedicated Cancer Beds' },
+  { value: '250 KM', label: 'Regional Reach' },
+  { value: '2027', label: 'Conference Edition' }
 ];
-const eventDate = new Date('2026-12-01T09:00:00');
-const typePhrases = ['Where Awareness Meets Innovation', 'Purple for Strength. Pink for Hope.'];
-const revealLine = 'Together we turn science into survival stories.';
+const eventDate = new Date('2027-12-01T09:00:00');
+const typePhrases = ['Preventive. Personalized. Precision. Palliative.', 'Advancing the full cancer care continuum.'];
+const revealLine = 'YROC 2027 connects learning, technology, and compassion across every stage of cancer care.';
+const marqueeAttractions = [...bareillyAttractions, ...bareillyAttractions];
 
 function getCountdownParts(targetDate) {
   const difference = targetDate.getTime() - new Date().getTime();
@@ -84,29 +89,40 @@ export default function Home() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: 'easeOut' }}
-          className="media-tile neon-outline"
-          style={{ height: 'clamp(170px, 34vw, 340px)' }}
+          className="media-tile neon-outline hero-banner-frame"
         >
-          <img src="/banner.jpg" alt="YROC Banner" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          <OptimizedImage
+            src={heroBanner}
+            alt="YROC Banner"
+            width={1600}
+            height={600}
+            pictureClassName="fit-cover-picture"
+            className="fit-cover-image"
+            fetchPriority="high"
+            loading="eager"
+            sizes="100vw"
+          />
         </motion.div>
       </motion.section>
-      
-      {/* Hero Section */}
-      <section style={{ minHeight: 'min(860px, calc(100vh - var(--nav-height)))', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+
+      <section className="hero-stage">
         <motion.div variants={textFade} initial="hidden" animate="visible" className="hero-glass-panel">
           <motion.p variants={textFade} initial="hidden" animate="visible" style={{ color: 'var(--accent-primary)', fontSize: '1.2rem', letterSpacing: '4px', textTransform: 'uppercase', marginBottom: '20px' }}>
-            Theme: Advancing Oncology Together
+            Theme: Cancer Care Continuum
           </motion.p>
           <motion.h1
-            variants={textFade} initial="hidden" animate="visible" transition={{ delay: 0.2 }}
+            variants={textFade}
+            initial="hidden"
+            animate="visible"
+            transition={{ delay: 0.2 }}
             style={{ fontSize: 'clamp(3rem, 8vw, 6rem)', lineHeight: 1.1, maxWidth: '1000px', marginBottom: '26px' }}
           >
-            The 13th <br/>
-            <span className="gradient-text">YROC Cancer Conference</span>
+            YROC <br />
+            <span className="gradient-text">Young Radiation Oncology Conference 2027</span>
           </motion.h1>
           <p className="typing-line">{typedText}<span className="typing-caret">|</span></p>
           <p className="gradient-moving-text" style={{ marginTop: '6px', marginBottom: '20px' }}>
-            Future-forward oncology for a new generation.
+            Preventive. Personalized. Precision. Palliative.
           </p>
           <p style={{ margin: '0 0 22px', lineHeight: 1.7, color: 'var(--text-secondary)', maxWidth: '780px' }}>
             {revealLine.split(' ').map((word, idx) => (
@@ -167,7 +183,7 @@ export default function Home() {
             <p style={{ margin: 0, fontWeight: 600, color: 'var(--accent)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
               Live Countdown
             </p>
-            <h3 style={{ marginTop: '10px', fontSize: 'clamp(1.6rem, 3vw, 2.2rem)' }}>YROC 2026 starts in</h3>
+            <h3 style={{ marginTop: '10px', fontSize: 'clamp(1.6rem, 3vw, 2.2rem)' }}>YROC 2027 starts in</h3>
           </div>
           <div className="countdown-grid">
             <div className="count-pill"><strong>{timeLeft.days}</strong><span>Days</span></div>
@@ -178,7 +194,40 @@ export default function Home() {
         </div>
       </motion.section>
 
-      {/* Picture Section */}
+      <motion.section
+        style={{ padding: 'clamp(26px, 4vw, 34px) 0 clamp(54px, 8vw, 82px)' }}
+        variants={sectionReveal}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.16 }}
+      >
+        <div className="home-attractions-shell">
+          <div className="home-attractions-heading">
+            <span className="about-kicker">Local Attractions</span>
+            <h2 className="home-attractions-title">
+              Bareilly Beyond The Venue
+            </h2>
+            <p className="page-lead centered">
+              Tap any image to reveal the place details. The strip stays image-only so the motion feels clean on mobile and desktop alike.
+            </p>
+          </div>
+
+          <div className="attractions-marquee-shell">
+            <div className="attractions-marquee-track">
+              {marqueeAttractions.map((attraction, index) => (
+                <div className="attractions-marquee-item" key={`${attraction.title}-${index}`}>
+                  <BareillyAttractionCard
+                    attraction={attraction}
+                    index={index % bareillyAttractions.length}
+                    compact
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </motion.section>
+
       <motion.section
         style={{ padding: 'clamp(56px, 8vw, 100px) 0', borderTop: '1px solid rgba(124,58,237,0.12)' }}
         variants={sectionReveal}
@@ -186,9 +235,17 @@ export default function Home() {
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
       >
-         <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.6 }} style={{ width: '100%', height: 'clamp(220px, 42vw, 400px)', borderRadius: '20px', overflow: 'hidden' }}>
-            <img src="/hero.png" alt="Medical Conference Visuals" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-         </motion.div>
+        <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="feature-media-frame">
+          <OptimizedImage
+            src={heroBanner}
+            alt="Medical Conference Visuals"
+            width={1600}
+            height={900}
+            pictureClassName="fit-cover-picture"
+            className="fit-cover-image"
+            sizes="100vw"
+          />
+        </motion.div>
       </motion.section>
 
       <motion.section
@@ -206,7 +263,6 @@ export default function Home() {
         </div>
       </motion.section>
 
-      {/* WriteUp Section (300-400 words) */}
       <motion.section
         style={{ padding: 'clamp(56px, 8vw, 100px) 0', maxWidth: '800px', margin: '0 auto' }}
         variants={sectionReveal}
@@ -214,29 +270,25 @@ export default function Home() {
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
       >
-        <motion.h2 
-          initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-          style={{ fontSize: '2.5rem', marginBottom: '40px' }}
-        >
-          Welcome to the Forefront of Discovery
+        <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} style={{ fontSize: '2.5rem', marginBottom: '40px' }}>
+          About the Institute
         </motion.h2>
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }}>
           <p style={{ fontSize: '1.2rem', lineHeight: 1.8, color: 'var(--text-secondary)', marginBottom: '20px' }}>
-            The 13th YROC Cancer Conference stands as a beacon of collaboration, innovation, and unwavering dedication to the global fight against cancer. Over the past twelve iterations, YROC has evolved from a regional symposium into an internationally recognized platform where leading oncologists, researchers, policymakers, and advocates converge to exchange groundbreaking ideas and clinical advancements.
+            Shri Ram Murti Smarak Institute of Medical Sciences, Bareilly, conceptualised in 2002, is a modern 1200-bed multi super speciality tertiary care hospital and medical college serving Bareilly and the surrounding region up to the farthest border towns of Uttarakhand and Nepal.
           </p>
           <p style={{ fontSize: '1.2rem', lineHeight: 1.8, color: 'var(--text-secondary)', marginBottom: '20px' }}>
-            This year, under the theme "Advancing Oncology Together," we are expanding our focus on multidisciplinary approaches to cancer care. We recognize that transformative breakthroughs do not happen in isolation. They are born at the intersection of diverse disciplines—from molecular biology and immunology to data science and patient advocacy. The 13th YROC program is meticulously designed to foster these critical connections.
+            Recognized by the Ministry of Health, Government of India and approved by NMC, New Delhi, the institute offers MBBS, postgraduate programmes across departments, and super speciality courses in Neurology and Neurosurgery. Over twenty three years, it has grown substantially in expertise, infrastructure, and medical education.
           </p>
           <p style={{ fontSize: '1.2rem', lineHeight: 1.8, color: 'var(--text-secondary)', marginBottom: '20px' }}>
-            Attendees will experience a dynamic convergence of keynote lectures, interactive panel discussions, and late-breaking abstract presentations. Our sessions will delve into the latest clinical trials, highly targeted therapeutic interventions, immunotherapy breakthroughs, and the critical importance of early diagnostic technologies. Furthermore, we are intensely focused on health equity, ensuring that the remarkable innovations discussed here translate to improved survival rates and quality of life for patients across all demographics globally.
+            Its advanced facilities include 3 Tesla 48 channel MRI, 256 Slice Dual Source CT Scan, High Energy Linear Accelerator, HDR Brachytherapy, 19 modular laminar flow OTs, critical care units, Cath Lab with DSA, SSI Mantra Surgical Robotic System, computerized labs, and a blood bank with component separation facility.
           </p>
           <p style={{ fontSize: '1.2rem', lineHeight: 1.8, color: 'var(--text-secondary)' }}>
-            We invite you to join us in this critical endeavor. Together, through shared knowledge and relentless pursuit of excellence, we can accelerate the pace of scientific discovery and redefine the future of oncology. Your presence here is a vital component of this collective mission.
+            YROC 2027 builds on this clinical and academic foundation by creating a focused platform around the cancer care continuum, bringing together prevention, diagnosis, precision treatment, survivorship, and palliative care in one conversation.
           </p>
         </motion.div>
       </motion.section>
 
-      {/* Vision Section (250-350 words) */}
       <motion.section
         style={{ padding: 'clamp(56px, 8vw, 100px) 0', maxWidth: '800px', margin: '0 auto' }}
         variants={sectionReveal}
@@ -244,23 +296,35 @@ export default function Home() {
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
       >
-        <motion.h2 
-          initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-          style={{ fontSize: '2.5rem', marginBottom: '40px', color: 'var(--accent-primary)' }}
-        >
-          Our Vision
+        <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} style={{ fontSize: '2.5rem', marginBottom: '40px', color: 'var(--accent-primary)' }}>
+          R R Cancer Institute &amp; Research Centre
         </motion.h2>
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }}>
           <p style={{ fontSize: '1.2rem', lineHeight: 1.8, color: 'var(--text-secondary)', marginBottom: '20px' }}>
-            At the heart of the YROC paradigm lies a profound and ambitious vision: a future where cancer is fundamentally preventable, highly manageable, and ultimately curable. We envision a global healthcare ecosystem where the devastating impact of this disease is mitigated by rapid, equitable access to precision medicine and holistic supportive care. Our vision extends far beyond the confines of clinical laboratories and hospital wards; it encompasses a comprehensive societal shift in how we understand, approach, and conquer malignancies.
+            The dedicated 100-bed R R Cancer Institute &amp; Research Centre is leading the way in the management of cancer patients with state-of-the-art infrastructure, latest machines, and expert faculty. It has established itself as a centre of excellence in cancer care across Uttar Pradesh and Uttarakhand.
           </p>
           <p style={{ fontSize: '1.2rem', lineHeight: 1.8, color: 'var(--text-secondary)', marginBottom: '20px' }}>
-            We are driven by the belief that the synergistic intelligence of the global scientific community is our most powerful weapon. By breaking down institutional silos and fostering unprecedented levels of cross-border collaboration, we can condense decades of research into years of transformative progress. We aim to empower the next generation of researchers with the resources and mentorship required to challenge existing paradigms and chart untraversed territories in molecular biology.
+            The centre is equipped for conventional surgery, 3D-4K laparoscopic surgery, robotic surgery, IGRT, IMRT, SRS, SRT, SBRT, VMAT through High Energy Linear Accelerator (True Beam), HDR brachytherapy, interstitial implants, chemotherapy, immunotherapy, targeted therapy, hormonal therapy, bone marrow procedures, and palliative care.
           </p>
           <p style={{ fontSize: '1.2rem', lineHeight: 1.8, color: 'var(--text-secondary)' }}>
-            Ultimately, our vision is deeply rooted in human resilience. We exist to honor the courage of patients and the dedication of caregivers. Everything we do—from curating this world-class conference curriculum to facilitating groundbreaking research grants—is dedicated to the singular goal of saving lives and restoring hope to millions of families worldwide.
+            With strong community outreach and screening programmes, the institute is also a pioneer in early cancer detection, treatment access, and cancer awareness, making the conference theme of continuum care especially relevant to its mission.
           </p>
         </motion.div>
+      </motion.section>
+
+      <motion.section
+        style={{ padding: 'clamp(24px, 4vw, 40px) 0 clamp(56px, 8vw, 90px)', maxWidth: '800px', margin: '0 auto' }}
+        variants={sectionReveal}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+      >
+        <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} style={{ fontSize: '2.2rem', marginBottom: '28px', color: 'var(--accent-primary)' }}>
+          Department of Radiation Oncology
+        </motion.h2>
+        <p style={{ fontSize: '1.15rem', lineHeight: 1.8, color: 'var(--text-secondary)' }}>
+          The Department of Radiation Oncology is central to the academic and clinical spirit of YROC 2027. With advanced radiotherapy capabilities, multidisciplinary coordination, and a patient-centred approach, the department supports precise treatment planning, evidence-based practice, and compassionate care across the full cancer journey.
+        </p>
       </motion.section>
 
       <motion.section
@@ -270,12 +334,7 @@ export default function Home() {
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
       >
-        <motion.h2
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          style={{ fontSize: '2.2rem', marginBottom: '20px', color: 'var(--accent)' }}
-        >
+        <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} style={{ fontSize: '2.2rem', marginBottom: '20px', color: 'var(--accent)' }}>
           Dynamic Media Experience
         </motion.h2>
         <p style={{ fontSize: '1.05rem', color: 'var(--text-secondary)', marginBottom: '28px' }}>
@@ -298,7 +357,6 @@ export default function Home() {
           </motion.div>
         </div>
       </motion.section>
-
     </motion.div>
   );
 }
