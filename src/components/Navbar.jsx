@@ -14,7 +14,15 @@ export default function Navbar({ theme, onToggleTheme }) {
 
   const links = [
     { name: 'Home', path: '/' },
-    { name: 'About', path: '/about' },
+    {
+      name: 'About',
+      path: '/about',
+      submenu: [
+        { name: 'About IMS', path: '/about#about-ims' },
+        { name: 'About Bareilly', path: '/about#about-bareilly' },
+        { name: 'About YROC', path: '/about#about-yroc' }
+      ]
+    },
     { name: 'Invitation', path: '/invitation' },
     { name: 'Abstract', path: '/abstract' },
     { name: 'Committee', path: '/committee' },
@@ -45,22 +53,62 @@ export default function Navbar({ theme, onToggleTheme }) {
 
       <div className={`nav-links ${isMenuOpen ? 'open' : ''}`}>
         {links.map((link) => (
-          <NavLink
-            key={link.name}
-            to={link.path}
-            onClick={() => setIsMenuOpen(false)}
-            style={({ isActive }) => ({
-              fontSize: '0.9rem',
-              textTransform: 'uppercase',
-              letterSpacing: '1px',
-              fontWeight: 500,
-              color: isActive ? 'var(--accent)' : 'var(--text-secondary)',
-              textShadow: isActive ? '0 0 18px rgba(168, 85, 247, 0.35)' : 'none',
-              transition: 'color 0.3s ease, text-shadow 0.3s ease'
-            })}
-          >
-            {link.name}
-          </NavLink>
+          link.submenu ? (
+            <div key={link.name} className="nav-item nav-dropdown">
+              <NavLink
+                to={link.path}
+                onClick={() => setIsMenuOpen(false)}
+                style={({ isActive }) => ({
+                  fontSize: '0.9rem',
+                  textTransform: 'uppercase',
+                  letterSpacing: '1px',
+                  fontWeight: 500,
+                  color: isActive ? 'var(--accent)' : 'var(--text-secondary)',
+                  textShadow: isActive ? '0 0 18px rgba(168, 85, 247, 0.35)' : 'none',
+                  transition: 'color 0.3s ease, text-shadow 0.3s ease'
+                })}
+              >
+                {link.name}
+              </NavLink>
+              <div className="dropdown-menu">
+                {link.submenu.map((item) => (
+                  <NavLink
+                    key={item.name}
+                    to={item.path}
+                    onClick={() => setIsMenuOpen(false)}
+                    className="dropdown-link"
+                    style={({ isActive }) => ({
+                      fontSize: '0.85rem',
+                      textTransform: 'none',
+                      letterSpacing: '0.02em',
+                      fontWeight: 500,
+                      color: isActive ? 'var(--accent)' : 'var(--text-secondary)',
+                      transition: 'color 0.2s ease'
+                    })}
+                  >
+                    {item.name}
+                  </NavLink>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <NavLink
+              key={link.name}
+              to={link.path}
+              onClick={() => setIsMenuOpen(false)}
+              style={({ isActive }) => ({
+                fontSize: '0.9rem',
+                textTransform: 'uppercase',
+                letterSpacing: '1px',
+                fontWeight: 500,
+                color: isActive ? 'var(--accent)' : 'var(--text-secondary)',
+                textShadow: isActive ? '0 0 18px rgba(168, 85, 247, 0.35)' : 'none',
+                transition: 'color 0.3s ease, text-shadow 0.3s ease'
+              })}
+            >
+              {link.name}
+            </NavLink>
+          )
         ))}
         <button
           type="button"

@@ -1,11 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 
 import Home from './pages/Home';
 import AboutIMS from './pages/AboutIMS';
+import AboutYROC2027 from './pages/AboutYROC2027';
+
 import Invitation from './pages/Invitation';
 import Registration from './pages/Registration';
 import Abstract from './pages/Abstract';
@@ -13,6 +16,8 @@ import Committee from './pages/Committee';
 import Contact from './pages/Contact';
 import Media from './pages/Media';
 import Gallery from './pages/Gallery';
+
+const AdminApp = lazy(() => import('./admin/AppAdmin'));
 /* WelcomeSplash removed: splash flow disabled by request */
 
 function AnimatedRoutes() {
@@ -23,6 +28,8 @@ function AnimatedRoutes() {
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<AboutIMS />} />
+        <Route path="/about/yroc" element={<AboutYROC2027 />} />
+
         <Route path="/invitation" element={<Invitation />} />
         <Route path="/registration" element={<Registration />} />
         <Route path="/abstract" element={<Abstract />} />
@@ -60,8 +67,16 @@ function App() {
     <Router>
       <Navbar theme={theme} onToggleTheme={toggleTheme} />
       <div className="page-content">
-        <AnimatedRoutes />
+        <Routes>
+          <Route path="/admin/*" element={
+            <Suspense fallback={<div className="admin-loading">Loading admin panel…</div>}>
+              <AdminApp />
+            </Suspense>
+          } />
+          <Route path="/*" element={<AnimatedRoutes />} />
+        </Routes>
       </div>
+      <Footer />
     </Router>
   );
 }

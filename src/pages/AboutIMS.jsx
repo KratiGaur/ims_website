@@ -1,5 +1,49 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
+import { useLocation } from 'react-router-dom';
+
+const yrocPastEvents = [
+  {
+    id: '12th',
+    label: '12th YROC (2026)',
+    image: '/yroc_pastEvents/12thYroc.jpeg',
+    title: '12th YROC 2025',
+    body: `The 12th Young Radiation Oncologists Conference (YROC) was indeed held on 24th and 25th January 2026.\n\n• Venue: NIMHANS Convention Centre, Bengaluru, Karnataka.\n• Organizer: Department of Radiation Oncology, Kidwai Memorial Institute of Oncology.\n• Theme: "Radiate Knowledge, Transform Care"`
+  },
+  {
+    id: '11th',
+    label: '11th YROC (2025)',
+    image: '/yroc_pastEvents/11thYroc.jpeg',
+    title: '11th YROC 2025',
+    body: `11th YROC 2025\n\n• Conducted in Madurai.\n• Theme: Challenges & Controversies in Clinical Oncology.\n• Sessions included stereotactic radiosurgery, brachytherapy, re-irradiation, debates, and practical oncology discussions`
+  },
+  {
+    id: '10th',
+    label: '10th YROC (2024)',
+    image: '/yroc_pastEvents/10thYroc.jpeg',
+    title: '10th YROC 2024',
+    body: `10th YROC 2024\n\n• Organized at AIIMS Jodhpur.\n• Theme centered on Brachytherapy and SABR (Stereotactic Ablative Radiotherapy).\n• Included workshops, mentorship sessions, panel discussions, and scientific presentation`
+  },
+  {
+    id: '9th',
+    label: '9th YROC (2023)',
+    image: '/yroc_pastEvents/9thYroc.jpeg',
+    title: '9th YROC 2023',
+    body: `9th YROC 2023\n\n• Focused on emerging innovations in oncology and radiation therapy.\n• Theme: Innovations in Oncology: Spanning New Horizon.\n• Emphasized technological advances, precision radiotherapy, and improved patient outcomes.\n• 25 FEB 2023 - 26 FEB 2023\n\nVENUE: Dr. Ram Manohar Lohia I.M.S, Lucknow 2023`
+  },
+  {
+    id: '8th',
+    label: '8th YROC (2020)',
+    image: '/yroc_pastEvents/8thYroc.jpeg',
+    title: '8th YROC',
+    body: `8th YROC\n\nK.M.C.H., Coimbatore 2020\n17 - 19 Jan 2020\n\nTheme: Radiotherapy for the Decade Ahead: Prepare for inevitable`
+  }
+];
+
+function formatBody(text) {
+  return text.split('\n').map((l) => l.trimEnd());
+}
+
 
 import BareillyAttractionCard from '../components/BareillyAttractionCard';
 import OptimizedImage from '../components/OptimizedImage';
@@ -103,7 +147,12 @@ function AttractionModal({ attraction, onClose, modalRef }) {
 
 export default function AboutIMS() {
   const [activeCard, setActiveCard] = useState(null);
+  const [activeEventId, setActiveEventId] = useState(yrocPastEvents[0]?.id ?? '12th');
+
+  const activeEvent = yrocPastEvents.find((e) => e.id === activeEventId) ?? yrocPastEvents[0];
+
   const modalRef = useRef(null);
+  const location = useLocation();
 
   useEffect(() => {
     if (!activeCard) {
@@ -126,6 +175,16 @@ export default function AboutIMS() {
       document.body.style.overflow = '';
     };
   }, [activeCard]);
+
+  useEffect(() => {
+    if (!location.hash) return;
+    const targetId = location.hash.replace('#', '');
+    const target = document.getElementById(targetId);
+
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [location.hash]);
 
   return (
     <LayoutGroup>
@@ -165,6 +224,7 @@ export default function AboutIMS() {
         </motion.section>
 
         <motion.section
+          id="about-ims"
           className="page-section-tight"
           variants={sectionReveal}
           initial="hidden"
@@ -182,6 +242,7 @@ export default function AboutIMS() {
         </motion.section>
 
         <motion.section
+          id="about-bareilly"
           className="page-section-tight"
           variants={sectionReveal}
           initial="hidden"
@@ -205,8 +266,93 @@ export default function AboutIMS() {
           </div>
         </motion.section>
 
+        {/* YROC Past Events dropdown embedded inside About page */}
+        <motion.section
+          id="about-yroc"
+          className="page-section-tight"
+
+          variants={sectionReveal}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.18 }}
+        >
+          <div className="section-card" style={{ padding: 'clamp(18px, 3vw, 28px)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+              <div>
+                <span className="about-kicker" style={{ marginBottom: 10, display: 'inline-flex' }}>
+                  YROC
+                </span>
+                <h2 style={{ marginTop: 0, marginBottom: 0, color: 'var(--accent-primary)' }}>Past Events</h2>
+              </div>
+
+              <div style={{ minWidth: 260 }}>
+                <label htmlFor="yroc-event-select-inline" style={{ display: 'block', color: 'var(--text-secondary)', fontWeight: 600, marginBottom: 8 }}>
+                  Select Edition
+                </label>
+                <select
+                  id="yroc-event-select-inline"
+                  value={activeEventId}
+                  onChange={(e) => setActiveEventId(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '12px 14px',
+                    borderRadius: 16,
+                    border: '1px solid var(--surface-stroke)',
+                    background: 'rgba(248, 251, 255, 0.7)',
+                    color: 'var(--text-primary)',
+                    outline: 'none'
+                  }}
+                >
+                  {yrocPastEvents.map((event) => (
+                    <option key={event.id} value={event.id}>
+                      {event.label}
+                    </option>
+                  ))}
+
+                </select>
+              </div>
+            </div>
+
+            <div className="about-yroc-layout" style={{ marginTop: 22, display: 'grid', gridTemplateColumns: '1fr 0.9fr', gap: 16, alignItems: 'start' }}>
+              <div className="about-yroc-writeup" style={{ paddingRight: 16 }}>
+                {formatBody(activeEvent?.body ?? '').map((line, idx) => {
+                  if (!line) return <div key={idx} style={{ height: 10 }} />;
+                  if (line.startsWith('•')) {
+                    return (
+                      <div key={idx} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', marginBottom: 10 }}>
+                        <span style={{ color: 'var(--accent)', fontWeight: 900, minWidth: 10 }}>{'•'}</span>
+                        <p style={{ margin: 0, color: 'var(--text-secondary)', lineHeight: 1.85, whiteSpace: 'pre-wrap' }}>{line.replace(/^•\s*/, '')}</p>
+                      </div>
+                    );
+                  }
+                  return (
+                    <p key={idx} style={{ margin: '0 0 12px', color: 'var(--text-secondary)', lineHeight: 1.85, whiteSpace: 'pre-wrap' }}>
+                      {line}
+                    </p>
+                  );
+                })}
+              </div>
+
+              <div className="about-yroc-image" style={{ flex: '0 0 42%', minWidth: 280 }}>
+                <div className="section-card" style={{ padding: 12, background: 'transparent', borderRadius: 22 }}>
+                  <img
+                    src={activeEvent?.image}
+
+                    alt={activeEvent?.title ?? 'YROC Past Event'}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 18, display: 'block' }}
+                    onError={(e) => {
+                      e.currentTarget.src = '/hero.png';
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.section>
+
         <motion.section
           className="page-section"
+
           variants={sectionReveal}
           initial="hidden"
           whileInView="visible"
@@ -231,6 +377,7 @@ export default function AboutIMS() {
             ))}
           </div>
         </motion.section>
+
 
         <AnimatePresence>
           {activeCard ? (

@@ -6,6 +6,7 @@ const pageVariants = {
   in: { opacity: 1, y: 0, transition: { duration: 0.7, ease: 'easeOut' } },
   out: { opacity: 0, y: -20, transition: { duration: 0.4, ease: 'easeIn' } }
 };
+
 const sectionReveal = {
   hidden: { opacity: 0, y: 36 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: 'easeOut' } }
@@ -13,48 +14,72 @@ const sectionReveal = {
 
 const galleryItems = [
   {
-    title: 'Oncology Symposium Hall',
-    src: 'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1200&q=80',
+    title: 'Event Photo 1',
+    src: '/uploads/gallery/WhatsApp Image 2026-05-29 at 4.14.30 PM.jpeg',
     category: 'Venue'
   },
   {
-    title: 'Clinical Team Collaboration',
-    src: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1200&q=80',
+    title: 'Event Photo 2',
+    src: '/uploads/gallery/WhatsApp Image 2026-05-29 at 4.15.20 PM.jpeg',
     category: 'Speakers'
   },
   {
-    title: 'Audience Engagement',
-    src: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200&q=80',
+    title: 'Event Photo 3',
+    src: '/uploads/gallery/WhatsApp Image 2026-05-29 at 4.18.47 PM.jpeg',
     category: 'Audience'
   },
   {
-    title: 'Scientific Showcase',
-    src: 'https://images.unsplash.com/photo-1582719471384-894fbb16e074?auto=format&fit=crop&w=1200&q=80',
+    title: 'Event Photo 4',
+    src: '/uploads/gallery/WhatsApp Image 2026-05-29 at 4.19.16 PM.jpeg',
     category: 'Sessions'
   },
   {
-    title: 'Networking Session',
-    src: 'https://images.unsplash.com/photo-1540317580384-e5d43867caa6?auto=format&fit=crop&w=1200&q=80',
+    title: 'Event Photo 5',
+    src: '/uploads/gallery/WhatsApp Image 2026-05-29 at 4.19.51 PM.jpeg',
     category: 'Audience'
   },
   {
-    title: 'Conference Moments',
-    src: 'https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=1200&q=80',
+    title: 'Event Photo 6',
+    src: '/uploads/gallery/WhatsApp Image 2026-05-29 at 4.26.00 PM.jpeg',
     category: 'Sessions'
+  },
+  {
+    title: 'Event Photo 7',
+    src: '/uploads/gallery/WhatsApp Image 2026-05-29 at 4.32.00 PM.jpeg',
+    category: 'Venue'
+  },
+  // Removed Event Photo 8 (missing `src`)
+  {
+    title: 'Event Photo 9',
+    src: '/uploads/gallery/WhatsApp Image 2026-05-29 at 4.37.06 PM.jpeg',
+    category: 'Audience'
+  },
+  {
+    title: 'Event Photo 10',
+    src: '/uploads/gallery/WhatsApp Image 2026-05-29 at 4.37.38 PM.jpeg',
+    category: 'Sessions'
+  },
+  {
+    title: 'Event Photo 11',
+    src: '/uploads/gallery/WhatsApp Image 2026-05-29 at 4.38.46 PM.jpeg',
+    category: 'Venue'
   }
 ];
 
 export default function Gallery() {
   const MotionDiv = motion.div;
   const MotionFigure = motion.figure;
+
   const [activeCategory, setActiveCategory] = useState('All');
   const categories = ['All', 'Venue', 'Speakers', 'Sessions', 'Audience'];
 
-  const visibleItems = useMemo(() => (
-    activeCategory === 'All'
-      ? galleryItems
-      : galleryItems.filter((item) => item.category === activeCategory)
-  ), [activeCategory]);
+  const visibleItems = useMemo(() => {
+    const withValidSrc = galleryItems.filter((item) => Boolean(item?.src));
+
+    return activeCategory === 'All'
+      ? withValidSrc
+      : withValidSrc.filter((item) => item.category === activeCategory);
+  }, [activeCategory]);
 
   return (
     <MotionDiv initial="initial" animate="in" exit="out" variants={pageVariants} className="content-shell">
@@ -99,13 +124,17 @@ export default function Gallery() {
         viewport={{ once: true, amount: 0.12 }}
       >
         {visibleItems.map((item) => (
-          <MotionFigure key={item.title} whileHover={{ y: -5 }} className="media-tile" style={{ margin: 0 }}>
+          <MotionFigure
+            key={item.title}
+            whileHover={{ y: -5 }}
+            className="media-tile"
+            style={{ margin: 0 }}
+          >
             <img src={item.src} alt={item.title} />
-            <div className="media-overlay">View Image</div>
-            <figcaption className="media-caption">{item.title} - {item.category}</figcaption>
           </MotionFigure>
         ))}
       </motion.section>
     </MotionDiv>
   );
 }
+

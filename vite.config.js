@@ -24,6 +24,13 @@ export default defineConfig({
   ],
   server: {
     allowedHosts: true,
-    host: true
+    host: true,
+    proxy: {
+      '/api/admin': {
+        target: 'http://localhost',
+        changeOrigin: true,
+        rewrite: (path) => `/yroc13-website${path}`
+      }
+    }
   }
 });

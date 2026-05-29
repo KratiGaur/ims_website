@@ -196,7 +196,7 @@ export default function Home() {
               Bareilly Beyond The Venue
             </h2>
             <p className="page-lead centered">
-              Tap any image to reveal the place details. The strip stays image-only so the motion feels clean on mobile and desktop alike.
+              Explore the rich cultural tapestry and natural beauty that define this historic city.
             </p>
           </div>
 
