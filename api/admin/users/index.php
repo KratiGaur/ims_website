@@ -29,6 +29,36 @@ function mapAdmin(array $row): array
     ];
 }
 
+function adminEmailExists(string $email, int $excludeId = 0): bool
+{
+    global $connection;
+
+    if ($excludeId > 0) {
+        $statement = $connection->prepare('SELECT id FROM admins WHERE email = ? AND id <> ? LIMIT 1');
+
+        if (!$statement) {
+            return false;
+        }
+
+        $statement->bind_param('si', $email, $excludeId);
+    } else {
+        $statement = $connection->prepare('SELECT id FROM admins WHERE email = ? LIMIT 1');
+
+        if (!$statement) {
+            return false;
+        }
+
+        $statement->bind_param('s', $email);
+    }
+
+    $statement->execute();
+    $result = $statement->get_result();
+    $exists = (bool) $result->fetch_assoc();
+    $statement->close();
+
+    return $exists;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if (isset($_GET['roles'])) {
         $statement = $connection->prepare('SELECT id, name, description FROM roles ORDER BY name ASC');
@@ -54,50 +84,63 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!verifyCsrf()) {
-        jsonResponse(['success' => false, 'message' => 'Invalid CSRF token.'], 403);
-    }
+    try {
+        if (!verifyCsrf()) {
+            jsonResponse(['success' => false, 'message' => 'Invalid CSRF token.'], 403);
+        }
 
-    requirePermission('manage_users');
-    $payload = getJsonPayload();
-    $adminId = isset($payload['id']) ? (int) $payload['id'] : 0;
-    $name = sanitizeText((string) ($payload['name'] ?? ''));
-    $email = filter_var($payload['email'] ?? '', FILTER_VALIDATE_EMAIL);
-    $roleId = isset($payload['role_id']) ? (int) $payload['role_id'] : 0;
-    $status = isset($payload['status']) && $payload['status'] ? 1 : 0;
-    $password = trim((string) ($payload['password'] ?? ''));
+        requirePermission('manage_users');
+        $payload = getJsonPayload();
+        $adminId = isset($payload['id']) ? (int) $payload['id'] : 0;
+        $name = sanitizeText((string) ($payload['name'] ?? ''));
+        $email = filter_var($payload['email'] ?? '', FILTER_VALIDATE_EMAIL);
+        $roleId = isset($payload['role_id']) ? (int) $payload['role_id'] : 0;
+        $status = isset($payload['status']) && $payload['status'] ? 1 : 0;
+        $password = trim((string) ($payload['password'] ?? ''));
 
-    if ($name === '' || !$email || $roleId <= 0) {
-        jsonResponse(['success' => false, 'message' => 'Name, email, and role are required.'], 422);
-    }
+        if ($name === '' || !$email || $roleId <= 0) {
+            jsonResponse(['success' => false, 'message' => 'Name, email, and role are required.'], 422);
+        }
 
-    if ($adminId > 0) {
-        if ($password !== '') {
-            $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-            $statement = $connection->prepare('UPDATE admins SET name = ?, email = ?, password_hash = ?, role_id = ?, status = ?, updated_at = NOW() WHERE id = ?');
-            $statement->bind_param('sssiii', $name, $email, $passwordHash, $roleId, $status, $adminId);
+        if ($adminId > 0 && adminEmailExists((string) $email, $adminId)) {
+            jsonResponse(['success' => false, 'message' => 'Email already exists.'], 409);
+        }
+
+        if ($adminId === 0 && adminEmailExists((string) $email)) {
+            jsonResponse(['success' => false, 'message' => 'Email already exists.'], 409);
+        }
+
+        if ($adminId > 0) {
+            if ($password !== '') {
+                $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+                $statement = $connection->prepare('UPDATE admins SET name = ?, email = ?, password_hash = ?, role_id = ?, status = ?, updated_at = NOW() WHERE id = ?');
+                $statement->bind_param('sssiii', $name, $email, $passwordHash, $roleId, $status, $adminId);
+            } else {
+                $statement = $connection->prepare('UPDATE admins SET name = ?, email = ?, role_id = ?, status = ?, updated_at = NOW() WHERE id = ?');
+                $statement->bind_param('ssiii', $name, $email, $roleId, $status, $adminId);
+            }
+            $message = 'Admin user updated.';
         } else {
-            $statement = $connection->prepare('UPDATE admins SET name = ?, email = ?, role_id = ?, status = ?, updated_at = NOW() WHERE id = ?');
-            $statement->bind_param('ssiii', $name, $email, $roleId, $status, $adminId);
+            if ($password === '') {
+                jsonResponse(['success' => false, 'message' => 'Password is required for a new admin user.'], 422);
+            }
+            $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+            $statement = $connection->prepare('INSERT INTO admins (name, email, password_hash, role_id, status) VALUES (?, ?, ?, ?, ?)');
+            $statement->bind_param('sssii', $name, $email, $passwordHash, $roleId, $status);
+            $message = 'Admin user created.';
         }
-        $message = 'Admin user updated.';
-    } else {
-        if ($password === '') {
-            jsonResponse(['success' => false, 'message' => 'Password is required for a new admin user.'], 422);
-        }
-        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-        $statement = $connection->prepare('INSERT INTO admins (name, email, password_hash, role_id, status) VALUES (?, ?, ?, ?, ?)');
-        $statement->bind_param('sssii', $name, $email, $passwordHash, $roleId, $status);
-        $message = 'Admin user created.';
-    }
 
-    if (!$statement || !$statement->execute()) {
+        if (!$statement || !$statement->execute()) {
+            jsonResponse(['success' => false, 'message' => 'Unable to save admin user.'], 500);
+        }
+
+        $statement->close();
+        logAdminActivity((string) $user['id'], 'user_save', (string) $email);
+        jsonResponse(['success' => true, 'message' => $message]);
+    } catch (Throwable $throwable) {
+        error_log('Admin user save failed: ' . $throwable->getMessage());
         jsonResponse(['success' => false, 'message' => 'Unable to save admin user.'], 500);
     }
-
-    $statement->close();
-    logAdminActivity((string) $user['id'], 'user_save', $email);
-    jsonResponse(['success' => true, 'message' => $message]);
 }
 
 jsonResponse(['success' => false, 'message' => 'Method not allowed.'], 405);

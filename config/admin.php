@@ -30,11 +30,11 @@ sendAdminCorsHeaders();
 
 function startSecureSession(): void
 {
-    ini_set('session.use_strict_mode', '1');
-    ini_set('session.cookie_httponly', '1');
-    ini_set('session.cookie_samesite', 'Lax');
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        ini_set('session.use_strict_mode', '1');
+        ini_set('session.cookie_httponly', '1');
+        ini_set('session.cookie_samesite', 'Lax');
 
-    if (!headers_sent()) {
         $isHttps = (
             (!empty($_SERVER['HTTPS']) && strtolower((string) $_SERVER['HTTPS']) !== 'off')
             || (($_SERVER['SERVER_PORT'] ?? '') == '443')
@@ -43,9 +43,6 @@ function startSecureSession(): void
         if ($isHttps) {
             ini_set('session.cookie_secure', '1');
         }
-    }
-
-    if (session_status() !== PHP_SESSION_ACTIVE) {
         session_start();
     }
 }
@@ -174,8 +171,11 @@ function requireAdminAuth(): array
 function requirePermission(string $permission): void
 {
     $user = requireAdminAuth();
+    $currentPermissions = fetchUserPermissions((int) ($user['role_id'] ?? 0));
 
-    if (!in_array($permission, $user['permissions'] ?? [], true)) {
+    $_SESSION[AUTH_SESSION_KEY]['user']['permissions'] = $currentPermissions;
+
+    if (!in_array($permission, $currentPermissions, true)) {
         jsonResponse([
             'success' => false,
             'message' => 'Unauthorized'

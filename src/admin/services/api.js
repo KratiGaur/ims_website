@@ -4,13 +4,31 @@ function buildUrl(path) {
   return `${API_BASE}/${path}`;
 }
 
-function parseResponse(response) {
-  return response.json().then((data) => {
-    if (!response.ok && !data.success) {
-      return Promise.reject(data);
+async function parseResponse(response) {
+  const text = await response.text();
+  let data = null;
+
+  if (text) {
+    try {
+      data = JSON.parse(text);
+    } catch {
+      const snippet = text.replace(/\s+/g, ' ').trim().slice(0, 180);
+      throw new Error(snippet ? `Unexpected server response: ${snippet}` : 'Unexpected server response.');
     }
-    return data;
-  });
+  }
+
+  if (!response.ok) {
+    if (data && typeof data === 'object') {
+      throw data;
+    }
+    throw new Error(`Request failed with status ${response.status}.`);
+  }
+
+  if (data && data.success === false) {
+    throw data;
+  }
+
+  return data ?? {};
 }
 
 function getCsrfTokenFromGlobal() {

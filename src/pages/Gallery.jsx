@@ -1,5 +1,6 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
+import { fetchPublicGalleryAlbums } from '../services/publicContent';
 
 const pageVariants = {
   initial: { opacity: 0, y: 20 },
@@ -12,7 +13,7 @@ const sectionReveal = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: 'easeOut' } }
 };
 
-const galleryItems = [
+const fallbackGalleryItems = [
   {
     title: 'Event Photo 1',
     src: '/uploads/gallery/WhatsApp Image 2026-05-29 at 4.14.30 PM.jpeg',
@@ -71,15 +72,66 @@ export default function Gallery() {
   const MotionFigure = motion.figure;
 
   const [activeCategory, setActiveCategory] = useState('All');
-  const categories = ['All', 'Venue', 'Speakers', 'Sessions', 'Audience'];
+  const [galleryItems, setGalleryItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const loadGallery = async () => {
+      try {
+        const response = await fetchPublicGalleryAlbums();
+        if (!mounted) {
+          return;
+        }
+
+        const albums = response.data || [];
+        const flattenedItems = albums.flatMap((album) => {
+          const albumItems = Array.isArray(album.items) ? album.items : [];
+          if (albumItems.length > 0) {
+            return albumItems.map((item) => ({
+              title: item.title,
+              src: item.thumbnail_url || item.url,
+              category: album.title,
+            }));
+          }
+
+          return album.cover_url ? [{
+            title: album.title,
+            src: album.cover_url,
+            category: album.title,
+          }] : [];
+        });
+
+        setGalleryItems(flattenedItems);
+      } catch {
+        if (mounted) {
+          setGalleryItems([]);
+        }
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadGallery();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const visibleSource = galleryItems.length > 0 ? galleryItems : fallbackGalleryItems;
+  const categories = ['All', ...new Set(visibleSource.map((item) => item.category).filter(Boolean))];
 
   const visibleItems = useMemo(() => {
-    const withValidSrc = galleryItems.filter((item) => Boolean(item?.src));
+    const withValidSrc = visibleSource.filter((item) => Boolean(item?.src));
 
     return activeCategory === 'All'
       ? withValidSrc
       : withValidSrc.filter((item) => item.category === activeCategory);
-  }, [activeCategory]);
+  }, [activeCategory, visibleSource]);
 
   return (
     <MotionDiv initial="initial" animate="in" exit="out" variants={pageVariants} className="content-shell">
@@ -94,7 +146,9 @@ export default function Gallery() {
           <span className="gradient-text">Event Gallery</span>
         </h1>
         <p className="page-lead">
-          A dedicated, responsive gallery for conference images. You can add your own photos in this structure and scale it as your archive grows.
+          {loading
+            ? 'Loading the latest gallery albums from the admin panel...'
+            : 'A dedicated, responsive gallery for conference images. Updated albums appear here automatically.'}
         </p>
         <div style={{ marginTop: '14px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
           {categories.map((category) => (

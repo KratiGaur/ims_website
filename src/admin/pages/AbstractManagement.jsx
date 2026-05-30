@@ -1,23 +1,26 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { getCsrfToken } from '../services/csrf';
 import { fetchAbstracts, updateAbstract } from '../services/content';
+import { fetchAdmins } from '../services/users';
 
 function AbstractManagementPage() {
   const { csrfToken } = useAuth();
   const [abstracts, setAbstracts] = useState([]);
+  const [admins, setAdmins] = useState([]);
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState(null);
 
-  const loadAbstracts = async () => {
+  const loadData = async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetchAbstracts();
-      setAbstracts(response.data || []);
+      const [abstractResponse, adminResponse] = await Promise.all([fetchAbstracts(), fetchAdmins()]);
+      setAbstracts(abstractResponse.data || []);
+      setAdmins(adminResponse.data || []);
     } catch (err) {
       setError(err.message || 'Unable to load abstracts.');
     } finally {
@@ -26,7 +29,7 @@ function AbstractManagementPage() {
   };
 
   useEffect(() => {
-    loadAbstracts();
+    loadData();
   }, []);
 
   const ensureCsrfToken = async () => {
@@ -41,6 +44,8 @@ function AbstractManagementPage() {
     setSelected(item);
     setMessage('');
   };
+
+  const activeReviewers = useMemo(() => admins.filter((admin) => Number(admin.status) === 1), [admins]);
 
   const handleSave = async (event) => {
     event.preventDefault();
@@ -62,7 +67,7 @@ function AbstractManagementPage() {
         { headers: { 'X-CSRF-Token': token } }
       );
       setMessage('Abstract updated.');
-      await loadAbstracts();
+      await loadData();
     } catch (err) {
       setError(err.message || 'Unable to update abstract.');
     } finally {
@@ -82,9 +87,12 @@ function AbstractManagementPage() {
 
       <div className="admin-grid admin-grid-two-columns">
         <section className="glass-card admin-panel-card">
-          <h2>Submissions</h2>
+          <div className="panel-header">
+            <h2>Submissions</h2>
+            <span className="admin-badge">{abstracts.length} total</span>
+          </div>
           {loading ? (
-            <p>Loading abstracts…</p>
+            <p>Loading abstracts...</p>
           ) : (
             <ul className="admin-list">
               {abstracts.length === 0 ? (
@@ -93,7 +101,10 @@ function AbstractManagementPage() {
                 abstracts.map((item) => (
                   <li key={item.id} className={`admin-list-item ${selected?.id === item.id ? 'active' : ''}`}>
                     <button type="button" className="admin-link-button" onClick={() => handleSelect(item)}>
-                      {item.paper_title}
+                      <strong>{item.paper_title}</strong>
+                      <span style={{ display: 'block', fontSize: '0.92rem', color: 'var(--text-muted)' }}>
+                        {item.presenting_author_email} • {item.category}
+                      </span>
                     </button>
                     <span className="admin-badge">{item.status}</span>
                   </li>
@@ -107,8 +118,21 @@ function AbstractManagementPage() {
           <h2>{selected ? 'Review abstract' : 'Select an abstract'}</h2>
           {selected ? (
             <form onSubmit={handleSave} className="admin-form">
-              <p><strong>{selected.paper_title}</strong></p>
-              <p>{selected.authors}</p>
+              <div className="section-card" style={{ padding: 16, background: 'rgba(255,255,255,0.04)' }}>
+                <p style={{ margin: '0 0 8px' }}><strong>{selected.paper_title}</strong></p>
+                <p style={{ margin: '0 0 6px' }}>{selected.authors}</p>
+                <p style={{ margin: '0 0 6px' }}>{selected.presenting_author_email}</p>
+                <p style={{ margin: '0 0 6px' }}>{selected.category}</p>
+                {selected.file_url ? (
+                  <a href={selected.file_url} target="_blank" rel="noreferrer">
+                    View uploaded file
+                  </a>
+                ) : null}
+              </div>
+              <label>
+                Abstract text
+                <textarea rows={8} value={selected.abstract_text || ''} readOnly />
+              </label>
               <label>
                 Status
                 <select value={selected.status} onChange={(event) => setSelected({ ...selected, status: event.target.value })}>
@@ -119,17 +143,31 @@ function AbstractManagementPage() {
                 </select>
               </label>
               <label>
-                Review comments
-                <textarea rows={6} value={selected.review_comments || ''} onChange={(event) => setSelected({ ...selected, review_comments: event.target.value })} />
+                Reviewer
+                <select
+                  value={selected.assigned_reviewer || ''}
+                  onChange={(event) => setSelected({ ...selected, assigned_reviewer: event.target.value ? Number(event.target.value) : null })}
+                >
+                  <option value="">Unassigned</option>
+                  {activeReviewers.map((admin) => (
+                    <option key={admin.id} value={admin.id}>
+                      {admin.name} ({admin.email})
+                    </option>
+                  ))}
+                </select>
               </label>
               <label>
-                Reviewer ID
-                <input type="number" value={selected.assigned_reviewer || ''} onChange={(event) => setSelected({ ...selected, assigned_reviewer: Number(event.target.value) || null })} />
+                Review comments
+                <textarea
+                  rows={6}
+                  value={selected.review_comments || ''}
+                  onChange={(event) => setSelected({ ...selected, review_comments: event.target.value })}
+                />
               </label>
               {error ? <div className="admin-alert admin-alert-error">{error}</div> : null}
               {message ? <div className="admin-alert admin-alert-success">{message}</div> : null}
               <button type="submit" className="admin-button admin-button-primary" disabled={saving}>
-                {saving ? 'Saving…' : 'Save review'}
+                {saving ? 'Saving...' : 'Save review'}
               </button>
             </form>
           ) : (

@@ -43,7 +43,7 @@ function Sidebar({ user }) {
 
       <div className="admin-sidebar-footer">
         <p className="sidebar-role">Role: {user?.role_name || 'Unknown'}</p>
-        <p className="sidebar-note">Secure area • session protected</p>
+        <p className="sidebar-note">Secure area | session protected</p>
       </div>
     </aside>
   );

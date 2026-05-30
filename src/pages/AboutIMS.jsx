@@ -1,6 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
+import { fetchPublicPageBlocks } from '../services/publicContent';
+import BareillyAttractionCard from '../components/BareillyAttractionCard';
+import OptimizedImage from '../components/OptimizedImage';
+import { bareillyAttractions } from '../data/bareillyAttractions';
+import heroFallback from '../assets/hero.png';
+
+const Motion = motion;
 
 const yrocPastEvents = [
   {
@@ -44,12 +51,6 @@ function formatBody(text) {
   return text.split('\n').map((l) => l.trimEnd());
 }
 
-
-import BareillyAttractionCard from '../components/BareillyAttractionCard';
-import OptimizedImage from '../components/OptimizedImage';
-import { bareillyAttractions } from '../data/bareillyAttractions';
-import heroFallback from '../assets/hero.png';
-
 const pageVariants = {
   initial: { opacity: 0, y: 20 },
   in: { opacity: 1, y: 0, transition: { duration: 0.8, ease: 'easeOut' } },
@@ -83,7 +84,7 @@ function AttractionModal({ attraction, onClose, modalRef }) {
   const [imgSrc, setImgSrc] = useState(attraction.image);
 
   return (
-    <motion.div
+    <Motion.div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 p-4"
       style={{
         backdropFilter: 'blur(34px) saturate(0.9)',
@@ -95,7 +96,7 @@ function AttractionModal({ attraction, onClose, modalRef }) {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.25, ease: 'easeOut' }}
     >
-      <motion.div
+      <Motion.div
         ref={modalRef}
         className="section-card attraction-modal-shell w-full max-w-3xl overflow-hidden"
         layoutId={`card-${attraction.id}`}
@@ -105,7 +106,7 @@ function AttractionModal({ attraction, onClose, modalRef }) {
         exit={{ y: 20, scale: 0.96 }}
         transition={{ type: 'spring', stiffness: 280, damping: 28 }}
       >
-        <motion.div className="attraction-visual attraction-modal-visual" layoutId={`image-${attraction.id}`}>
+        <Motion.div className="attraction-visual attraction-modal-visual" layoutId={`image-${attraction.id}`}>
           <OptimizedImage
             src={imgSrc}
             alt={attraction.title}
@@ -116,23 +117,23 @@ function AttractionModal({ attraction, onClose, modalRef }) {
             sizes="(max-width: 768px) 92vw, 56vw"
           />
           <div className="attraction-wash" />
-          <motion.p className="attraction-label" layoutId={`label-${attraction.id}`}>
+          <Motion.p className="attraction-label" layoutId={`label-${attraction.id}`}>
             {attraction.label}
-          </motion.p>
-          <motion.h2 className="attraction-name-badge attraction-modal-name" layoutId={`title-${attraction.id}`}>
+          </Motion.p>
+          <Motion.h2 className="attraction-name-badge attraction-modal-name" layoutId={`title-${attraction.id}`}>
             {attraction.title}
-          </motion.h2>
-        </motion.div>
+          </Motion.h2>
+        </Motion.div>
 
         <div className="attraction-modal-copy">
-          <motion.div
+          <Motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.18, duration: 0.35, ease: 'easeOut' }}
             className="attraction-modal-description"
           >
             <p>{attraction.description}</p>
-          </motion.div>
+          </Motion.div>
 
           <div className="d-flex justify-content-end">
             <button type="button" className="glassy-cta" onClick={onClose}>
@@ -140,19 +141,49 @@ function AttractionModal({ attraction, onClose, modalRef }) {
             </button>
           </div>
         </div>
-      </motion.div>
-    </motion.div>
+      </Motion.div>
+    </Motion.div>
   );
 }
 
 export default function AboutIMS() {
   const [activeCard, setActiveCard] = useState(null);
   const [activeEventId, setActiveEventId] = useState(yrocPastEvents[0]?.id ?? '12th');
+  const [aboutBlocks, setAboutBlocks] = useState([]);
+  const [aboutLoading, setAboutLoading] = useState(true);
 
   const activeEvent = yrocPastEvents.find((e) => e.id === activeEventId) ?? yrocPastEvents[0];
 
   const modalRef = useRef(null);
   const location = useLocation();
+
+  useEffect(() => {
+    let mounted = true;
+
+    const loadAboutBlocks = async () => {
+      try {
+        const response = await fetchPublicPageBlocks('about');
+        if (!mounted) {
+          return;
+        }
+        setAboutBlocks(response.data || []);
+      } catch {
+        if (mounted) {
+          setAboutBlocks([]);
+        }
+      } finally {
+        if (mounted) {
+          setAboutLoading(false);
+        }
+      }
+    };
+
+    loadAboutBlocks();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (!activeCard) {
@@ -186,10 +217,18 @@ export default function AboutIMS() {
     }
   }, [location.hash]);
 
+  const aboutHighlightCards = aboutBlocks.length > 0
+    ? aboutBlocks.map((block) => ({
+      id: block.id,
+      title: block.title || block.block_key,
+      body: block?.content?.body || '',
+    }))
+    : instituteHighlights;
+
   return (
     <LayoutGroup>
-      <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} className="content-shell medium-shell">
-        <motion.section
+      <Motion.div initial="initial" animate="in" exit="out" variants={pageVariants} className="content-shell medium-shell">
+        <Motion.section
           className="page-section about-hero-section"
           variants={sectionReveal}
           initial="hidden"
@@ -221,9 +260,9 @@ export default function AboutIMS() {
               </div>
             </div>
           </div>
-        </motion.section>
+        </Motion.section>
 
-        <motion.section
+        <Motion.section
           id="about-ims"
           className="page-section-tight"
           variants={sectionReveal}
@@ -232,16 +271,23 @@ export default function AboutIMS() {
           viewport={{ once: true, amount: 0.18 }}
         >
           <div className="about-detail-grid">
-            {instituteHighlights.map((item) => (
-              <article key={item.title} className="section-card about-detail-card">
+            {aboutLoading && aboutBlocks.length === 0 ? (
+              instituteHighlights.map((item) => (
+                <article key={item.title} className="section-card about-detail-card">
+                  <h2>{item.title}</h2>
+                  <p>{item.body}</p>
+                </article>
+              ))
+            ) : aboutHighlightCards.map((item) => (
+              <article key={item.id || item.title} className="section-card about-detail-card">
                 <h2>{item.title}</h2>
-                <p>{item.body}</p>
+                <p style={{ whiteSpace: 'pre-wrap' }}>{item.body}</p>
               </article>
             ))}
           </div>
-        </motion.section>
+        </Motion.section>
 
-        <motion.section
+        <Motion.section
           id="about-bareilly"
           className="page-section-tight"
           variants={sectionReveal}
@@ -264,10 +310,10 @@ export default function AboutIMS() {
               </p>
             </div>
           </div>
-        </motion.section>
+        </Motion.section>
 
         {/* YROC Past Events dropdown embedded inside About page */}
-        <motion.section
+        <Motion.section
           id="about-yroc"
           className="page-section-tight"
 
@@ -348,9 +394,9 @@ export default function AboutIMS() {
               </div>
             </div>
           </div>
-        </motion.section>
+        </Motion.section>
 
-        <motion.section
+        <Motion.section
           className="page-section"
 
           variants={sectionReveal}
@@ -376,7 +422,7 @@ export default function AboutIMS() {
               />
             ))}
           </div>
-        </motion.section>
+        </Motion.section>
 
 
         <AnimatePresence>
@@ -388,7 +434,7 @@ export default function AboutIMS() {
             />
           ) : null}
         </AnimatePresence>
-      </motion.div>
+      </Motion.div>
     </LayoutGroup>
   );
 }

@@ -16,25 +16,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 $user = requireAdminAuth();
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $statement = $connection->prepare('SELECT id, title, url, type, category, tags, metadata, active, uploaded_at FROM media ORDER BY uploaded_at DESC');
-    $statement->execute();
-    $result = $statement->get_result();
-    $items = [];
-    while ($row = $result->fetch_assoc()) {
-        $items[] = [
-            'id' => (int) $row['id'],
-            'title' => $row['title'],
-            'url' => $row['url'],
-            'type' => $row['type'],
-            'category' => $row['category'],
-            'tags' => $row['tags'],
-            'metadata' => json_decode($row['metadata'], true) ?? [],
-            'active' => (bool) $row['active'],
-            'uploaded_at' => $row['uploaded_at'],
-        ];
+    try {
+        $statement = $connection->prepare('SELECT id, title, url, type, category, tags, metadata, active, uploaded_at FROM media ORDER BY uploaded_at DESC');
+        if (!$statement) {
+            jsonResponse(['success' => false, 'message' => 'Unable to prepare media query.'], 500);
+        }
+
+        $statement->execute();
+        $result = $statement->get_result();
+        $items = [];
+        while ($row = $result->fetch_assoc()) {
+            $items[] = [
+                'id' => (int) $row['id'],
+                'title' => $row['title'],
+                'url' => $row['url'],
+                'type' => $row['type'],
+                'category' => $row['category'],
+                'tags' => $row['tags'],
+                'metadata' => json_decode((string) $row['metadata'], true) ?? [],
+                'active' => (bool) $row['active'],
+                'uploaded_at' => $row['uploaded_at'],
+            ];
+        }
+        $statement->close();
+        jsonResponse(['success' => true, 'data' => $items]);
+    } catch (Throwable $throwable) {
+        error_log('Media list failed: ' . $throwable->getMessage());
+        jsonResponse(['success' => false, 'message' => 'Unable to load media items.'], 500);
     }
-    $statement->close();
-    jsonResponse(['success' => true, 'data' => $items]);
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -67,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $metadata = json_encode($payload['metadata'] ?? []);
 
     $statement = $connection->prepare('UPDATE media SET title = ?, category = ?, tags = ?, metadata = ?, active = ? WHERE id = ?');
-    $statement->bind_param('sssiii', $title, $category, $tags, $metadata, $active, $mediaId);
+    $statement->bind_param('ssssii', $title, $category, $tags, $metadata, $active, $mediaId);
 
     if (!$statement->execute()) {
         $statement->close();

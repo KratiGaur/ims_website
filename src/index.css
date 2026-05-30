@@ -445,6 +445,22 @@ a {
   gap: 20px;
 }
 
+.media-grid .media-tile {
+  display: flex;
+  flex-direction: column;
+}
+
+.media-grid .media-tile > img,
+.media-grid .media-tile > video,
+.media-grid .media-tile > iframe {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+}
+
 .gallery-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

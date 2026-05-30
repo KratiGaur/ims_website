@@ -27,70 +27,75 @@ if (!verifyCsrf()) {
 
 requirePermission('manage_media');
 
-$uploadDir = __DIR__ . '/../../../uploads/media';
-if (!is_dir($uploadDir) && !mkdir($uploadDir, 0755, true) && !is_dir($uploadDir)) {
-    jsonResponse(['success' => false, 'message' => 'Unable to create upload directory.'], 500);
-}
-
-if (empty($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
-    jsonResponse(['success' => false, 'message' => 'No file uploaded or upload failed.'], 400);
-}
-
-$file = $_FILES['file'];
-$allowedMimeTypes = [
-    'image/jpeg' => 'jpg',
-    'image/png' => 'png',
-    'image/webp' => 'webp',
-    'image/gif' => 'gif',
-    'video/mp4' => 'mp4',
-    'video/webm' => 'webm',
-    'application/pdf' => 'pdf',
-];
-
-$detectedMimeType = null;
-if (function_exists('finfo_open')) {
-    $finfo = finfo_open(FILEINFO_MIME_TYPE);
-    if ($finfo !== false) {
-        $detectedMimeType = finfo_file($finfo, $file['tmp_name']) ?: null;
-        finfo_close($finfo);
+try {
+    $uploadDir = __DIR__ . '/../../../uploads/media';
+    if (!is_dir($uploadDir) && !mkdir($uploadDir, 0755, true) && !is_dir($uploadDir)) {
+        jsonResponse(['success' => false, 'message' => 'Unable to create upload directory.'], 500);
     }
-}
 
-$mimeType = $detectedMimeType ?: ($file['type'] ?? '');
-if (!isset($allowedMimeTypes[$mimeType])) {
-    jsonResponse(['success' => false, 'message' => 'Unsupported file format.'], 415);
-}
+    if (empty($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
+        jsonResponse(['success' => false, 'message' => 'No file uploaded or upload failed.'], 400);
+    }
 
-if ($file['size'] > 20 * 1024 * 1024) {
-    jsonResponse(['success' => false, 'message' => 'File size exceeds 20 MB limit.'], 413);
-}
+    $file = $_FILES['file'];
+    $allowedMimeTypes = [
+        'image/jpeg' => 'jpg',
+        'image/png' => 'png',
+        'image/webp' => 'webp',
+        'image/gif' => 'gif',
+        'video/mp4' => 'mp4',
+        'video/webm' => 'webm',
+        'application/pdf' => 'pdf',
+    ];
 
-$extension = $allowedMimeTypes[$mimeType];
-$filename = bin2hex(random_bytes(16)) . '.' . $extension;
-$destination = $uploadDir . DIRECTORY_SEPARATOR . $filename;
+    $detectedMimeType = null;
+    if (function_exists('finfo_open')) {
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        if ($finfo !== false) {
+            $detectedMimeType = finfo_file($finfo, $file['tmp_name']) ?: null;
+            finfo_close($finfo);
+        }
+    }
 
-if (!move_uploaded_file($file['tmp_name'], $destination)) {
-    jsonResponse(['success' => false, 'message' => 'Unable to save uploaded file.'], 500);
-}
+    $mimeType = $detectedMimeType ?: ($file['type'] ?? '');
+    if (!isset($allowedMimeTypes[$mimeType])) {
+        jsonResponse(['success' => false, 'message' => 'Unsupported file format.'], 415);
+    }
 
-$fileUrl = '/uploads/media/' . basename($destination);
-$title = sanitizeText((string) ($_POST['title'] ?? pathinfo($file['name'], PATHINFO_FILENAME)));
-$type = sanitizeText((string) ($_POST['type'] ?? 'media'));
-$category = sanitizeText((string) ($_POST['category'] ?? 'general'));
-$tags = sanitizeText((string) ($_POST['tags'] ?? ''));
+    if ($file['size'] > 20 * 1024 * 1024) {
+        jsonResponse(['success' => false, 'message' => 'File size exceeds 20 MB limit.'], 413);
+    }
 
-$statement = $connection->prepare('INSERT INTO media (title, url, type, category, tags, active, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())');
-if (!$statement) {
-    jsonResponse(['success' => false, 'message' => 'Unable to prepare media query.'], 500);
-}
+    $extension = $allowedMimeTypes[$mimeType];
+    $filename = bin2hex(random_bytes(16)) . '.' . $extension;
+    $destination = $uploadDir . DIRECTORY_SEPARATOR . $filename;
 
-$active = 1;
-$statement->bind_param('ssssis', $title, $fileUrl, $type, $category, $tags, $active);
-if (!$statement->execute()) {
+    if (!move_uploaded_file($file['tmp_name'], $destination)) {
+        jsonResponse(['success' => false, 'message' => 'Unable to save uploaded file.'], 500);
+    }
+
+    $fileUrl = '/uploads/media/' . basename($destination);
+    $title = sanitizeText((string) ($_POST['title'] ?? pathinfo($file['name'], PATHINFO_FILENAME)));
+    $type = sanitizeText((string) ($_POST['type'] ?? 'image'));
+    $category = sanitizeText((string) ($_POST['category'] ?? 'general'));
+    $tags = sanitizeText((string) ($_POST['tags'] ?? ''));
+    $active = isset($_POST['active']) && (string) $_POST['active'] !== '0' ? 1 : 0;
+
+    $statement = $connection->prepare('INSERT INTO media (title, url, type, category, tags, active, uploaded_at) VALUES (?, ?, ?, ?, ?, ?, NOW())');
+    if (!$statement) {
+        jsonResponse(['success' => false, 'message' => 'Unable to prepare media query.'], 500);
+    }
+
+    $statement->bind_param('sssssi', $title, $fileUrl, $type, $category, $tags, $active);
+    if (!$statement->execute()) {
+        $statement->close();
+        jsonResponse(['success' => false, 'message' => 'Unable to save media record.'], 500);
+    }
+
     $statement->close();
-    jsonResponse(['success' => false, 'message' => 'Unable to save media record.'], 500);
+    logAdminActivity((string) $user['id'], 'media_upload', $fileUrl);
+    jsonResponse(['success' => true, 'message' => 'File uploaded successfully.', 'url' => $fileUrl]);
+} catch (Throwable $throwable) {
+    error_log('Media upload failed: ' . $throwable->getMessage());
+    jsonResponse(['success' => false, 'message' => 'Unable to upload media.'], 500);
 }
-
-$statement->close();
-logAdminActivity((string) $user['id'], 'media_upload', $fileUrl);
-jsonResponse(['success' => true, 'message' => 'File uploaded successfully.', 'url' => $fileUrl]);

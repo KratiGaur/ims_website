@@ -44,7 +44,7 @@ function LoginPage() {
               onChange={(event) => setPassword(event.target.value)}
               required
               autoComplete="current-password"
-              placeholder="••••••••"
+              placeholder="Enter password"
             />
           </label>
           {error ? <div className="admin-alert admin-alert-error">{error}</div> : null}

@@ -70,11 +70,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         rejectInvalidCsrf();
     }
 
-
     requirePermission('manage_gallery');
     $payload = getJsonPayload();
     $entity = sanitizeText((string) ($payload['entity'] ?? 'album'));
     $id = isset($payload['id']) ? (int) $payload['id'] : 0;
+    $action = sanitizeText((string) ($payload['action'] ?? ''));
+
+    if ($action === 'delete' && $id > 0) {
+        if ($entity === 'item') {
+            $statement = $connection->prepare('DELETE FROM gallery_items WHERE id = ?');
+        } else {
+            $statement = $connection->prepare('DELETE FROM gallery_albums WHERE id = ?');
+        }
+
+        if (!$statement) {
+            jsonResponse(['success' => false, 'message' => 'Unable to prepare delete query.'], 500);
+        }
+
+        $statement->bind_param('i', $id);
+        if (!$statement->execute()) {
+            $statement->close();
+            jsonResponse(['success' => false, 'message' => 'Unable to delete gallery item.'], 500);
+        }
+
+        $statement->close();
+        logAdminActivity((string) $user['id'], 'gallery_delete', $entity . ':' . (string) $id);
+        jsonResponse(['success' => true, 'message' => 'Gallery item deleted.']);
+    }
 
     if ($entity === 'album') {
         $title = sanitizeText((string) ($payload['title'] ?? ''));

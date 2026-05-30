@@ -1,17 +1,19 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
+import { fetchPublicMediaItems } from '../services/publicContent';
 
 const pageVariants = {
   initial: { opacity: 0, y: 20 },
   in: { opacity: 1, y: 0, transition: { duration: 0.7, ease: 'easeOut' } },
   out: { opacity: 0, y: -20, transition: { duration: 0.4, ease: 'easeIn' } }
 };
+
 const sectionReveal = {
   hidden: { opacity: 0, y: 36 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: 'easeOut' } }
 };
 
-const mediaItems = [
+const fallbackMediaItems = [
   {
     type: 'video',
     title: 'Opening Ceremony Highlights',
@@ -50,10 +52,74 @@ const mediaItems = [
   }
 ];
 
+function isVideoItem(item) {
+  const mediaType = (item?.type || '').toLowerCase();
+  if (mediaType.includes('video')) {
+    return true;
+  }
+
+  return /\.(mp4|webm|ogg|mov)$/i.test(item?.url || '');
+}
+
+function isPdfItem(item) {
+  const mediaType = (item?.type || '').toLowerCase();
+  if (mediaType.includes('pdf') || mediaType.includes('document') || mediaType.includes('poster')) {
+    return true;
+  }
+
+  return /\.pdf$/i.test(item?.url || '');
+}
+
+function formatMediaDescription(item) {
+  const descriptionParts = [item?.metadata?.description, item?.category, item?.tags].filter(Boolean);
+
+  if (descriptionParts.length > 0) {
+    return descriptionParts.join(' • ');
+  }
+
+  return 'Conference media item added from the admin panel.';
+}
+
 export default function Media() {
   const MotionDiv = motion.div;
   const MotionArticle = motion.article;
-  const spotlight = ['Trending Talks', 'Startup Showcase', 'Onco AI', 'Live Q&A'];
+  const [mediaItems, setMediaItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const loadMedia = async () => {
+      try {
+        const response = await fetchPublicMediaItems();
+        if (!mounted) {
+          return;
+        }
+        setMediaItems(response.data || []);
+      } catch {
+        if (mounted) {
+          setMediaItems([]);
+        }
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadMedia();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const visibleItems = mediaItems.length > 0 ? mediaItems : fallbackMediaItems;
+  const spotlight = useMemo(() => {
+    const source = mediaItems.length > 0 ? mediaItems : fallbackMediaItems;
+    const tags = source.map((item) => item.category || item.title).filter(Boolean);
+    return [...new Set(tags)].slice(0, 4);
+  }, [mediaItems]);
 
   return (
     <MotionDiv initial="initial" animate="in" exit="out" variants={pageVariants} className="content-shell">
@@ -68,10 +134,16 @@ export default function Media() {
           <span className="gradient-text">Media Hub</span>
         </h1>
         <p className="page-lead">
-          This section is built for dynamic storytelling with image and video support. Replace these placeholders with your official conference media files anytime.
+          {loading
+            ? 'Loading the latest media from the admin panel...'
+            : 'This section reflects the latest media uploaded from the admin panel.'}
         </p>
         <div style={{ marginTop: '14px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          {spotlight.map((chip) => <span key={chip} className="trend-chip">{chip}</span>)}
+          {spotlight.map((chip) => (
+            <span key={chip} className="trend-chip">
+              {chip}
+            </span>
+          ))}
         </div>
       </motion.section>
 
@@ -83,19 +155,25 @@ export default function Media() {
         whileInView="visible"
         viewport={{ once: true, amount: 0.12 }}
       >
-        {mediaItems.map((item) => (
+        {visibleItems.map((item) => (
           <MotionArticle key={item.title} whileHover={{ y: -5 }} className="media-tile">
-            {item.type === 'video' ? (
+            {isVideoItem(item) ? (
               <video controls preload="metadata">
-                <source src={item.src} type="video/mp4" />
+                <source src={item.url || item.src} type="video/mp4" />
               </video>
+            ) : isPdfItem(item) ? (
+              <iframe
+                src={item.url || item.src}
+                title={item.title}
+                style={{ width: '100%', height: '100%', minHeight: 280, border: 'none' }}
+              />
             ) : (
-              <img src={item.src} alt={item.title} />
+              <img src={item.url || item.src} alt={item.title} />
             )}
-            <div className="media-overlay">{item.type === 'video' ? 'Play Video' : 'View Photo'}</div>
+            <div className="media-overlay">{isVideoItem(item) ? 'Play Video' : 'View Photo'}</div>
             <div className="media-caption">
               <h3 style={{ margin: '0 0 8px', color: 'var(--accent)' }}>{item.title}</h3>
-              <p style={{ margin: 0, lineHeight: 1.6 }}>{item.description}</p>
+              <p style={{ margin: 0, lineHeight: 1.6 }}>{item.description || formatMediaDescription(item)}</p>
             </div>
           </MotionArticle>
         ))}

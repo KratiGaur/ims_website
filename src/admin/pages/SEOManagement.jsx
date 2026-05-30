@@ -7,7 +7,7 @@ function SEOManagementPage() {
   const { csrfToken } = useAuth();
   const [pages] = useState(['home', 'about', 'invitation', 'registration', 'abstract', 'committee', 'media', 'gallery', 'contact']);
   const [selectedPage, setSelectedPage] = useState('home');
-  const [settings, setSettings] = useState({ title: '', description: '', og_title: '', og_description: '', og_image_url: '', keywords: '', schema_json: {} });
+  const [settings, setSettings] = useState({ title: '', description: '', og_title: '', og_description: '', og_image_url: '', keywords: '' });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
@@ -18,7 +18,7 @@ function SEOManagementPage() {
     setError(null);
     try {
       const response = await fetchSeoSettings(pageKey);
-      setSettings(response.data || { title: '', description: '', og_title: '', og_description: '', og_image_url: '', keywords: '', schema_json: {} });
+      setSettings(response.data || { title: '', description: '', og_title: '', og_description: '', og_image_url: '', keywords: '' });
     } catch (err) {
       setError(err.message || 'Unable to load SEO settings.');
     } finally {
@@ -54,7 +54,6 @@ function SEOManagementPage() {
           og_description: settings.og_description,
           og_image_url: settings.og_image_url,
           keywords: settings.keywords,
-          schema_json: settings.schema_json,
         },
         { headers: { 'X-CSRF-Token': token } }
       );
@@ -115,16 +114,6 @@ function SEOManagementPage() {
               <label>
                 Keywords
                 <input type="text" value={settings.keywords} onChange={(event) => setSettings({ ...settings, keywords: event.target.value })} />
-              </label>
-              <label>
-                Schema JSON
-                <textarea rows={6} value={JSON.stringify(settings.schema_json, null, 2)} onChange={(event) => {
-                  try {
-                    setSettings({ ...settings, schema_json: JSON.parse(event.target.value) });
-                  } catch {
-                    setSettings({ ...settings, schema_json: event.target.value });
-                  }
-                }} />
               </label>
               {error ? <div className="admin-alert admin-alert-error">{error}</div> : null}
               {message ? <div className="admin-alert admin-alert-success">{message}</div> : null}

@@ -9,7 +9,7 @@ function AdminLayout() {
   const location = useLocation();
 
   if (loading) {
-    return <div className="admin-page-loading">Checking authentication…</div>;
+    return <div className="admin-page-loading">Checking authentication...</div>;
   }
 
   if (!user) {

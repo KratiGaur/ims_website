@@ -69,7 +69,7 @@ function App() {
       <div className="page-content">
         <Routes>
           <Route path="/admin/*" element={
-            <Suspense fallback={<div className="admin-loading">Loading admin panel…</div>}>
+            <Suspense fallback={<div className="admin-loading">Loading admin panel...</div>}>
               <AdminApp />
             </Suspense>
           } />

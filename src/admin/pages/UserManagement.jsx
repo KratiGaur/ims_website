@@ -105,7 +105,7 @@ function UserManagementPage() {
             </button>
           </div>
           {loading ? (
-            <p>Loading admins…</p>
+            <p>Loading admins...</p>
           ) : (
             <ul className="admin-list">
               {admins.length === 0 ? (
@@ -156,7 +156,7 @@ function UserManagementPage() {
             {error ? <div className="admin-alert admin-alert-error">{error}</div> : null}
             {message ? <div className="admin-alert admin-alert-success">{message}</div> : null}
             <button type="submit" className="admin-button admin-button-primary" disabled={saving}>
-              {saving ? 'Saving…' : 'Save user'}
+              {saving ? 'Saving...' : 'Save user'}
             </button>
           </form>
         </section>

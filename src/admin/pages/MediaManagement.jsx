@@ -10,8 +10,9 @@ function MediaManagementPage() {
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState(null);
-  const [form, setForm] = useState({ title: '', category: 'general', tags: '', type: 'media' });
+  const [form, setForm] = useState({ title: '', category: 'general', tags: '', type: 'image', active: true });
   const [file, setFile] = useState(null);
+  const categoryOptions = ['general', 'highlights', 'sessions', 'speakers', 'venue', 'workshop'];
 
   const loadMedia = async () => {
     setLoading(true);
@@ -54,13 +55,14 @@ function MediaManagementPage() {
     formData.append('type', form.type);
     formData.append('category', form.category);
     formData.append('tags', form.tags);
+    formData.append('active', form.active ? '1' : '0');
 
     try {
       const token = await ensureCsrfToken();
       await uploadMedia(formData, { headers: { 'X-CSRF-Token': token } });
       setMessage('Uploaded successfully.');
       setFile(null);
-      setForm({ title: '', category: 'general', tags: '', type: 'media' });
+      setForm({ title: '', category: 'general', tags: '', type: 'image', active: true });
       await loadMedia();
     } catch (err) {
       setError(err.message || 'Upload failed.');
@@ -77,10 +79,29 @@ function MediaManagementPage() {
         { id: item.id, title: item.title, category: item.category, tags: item.tags, active: item.active ? 0 : 1 },
         { headers: { 'X-CSRF-Token': token } }
       );
-      setMessage('Media item updated.');
+      setMessage(`${item.title} ${item.active ? 'deactivated' : 'activated'}.`);
       await loadMedia();
     } catch (err) {
       setError(err.message || 'Unable to update media item.');
+    }
+  };
+
+  const handleDelete = async (item) => {
+    if (!window.confirm(`Delete media item "${item.title}"?`)) {
+      return;
+    }
+
+    setError(null);
+    try {
+      const token = await ensureCsrfToken();
+      await updateMedia(
+        { id: item.id, action: 'delete' },
+        { headers: { 'X-CSRF-Token': token } }
+      );
+      setMessage('Media item deleted.');
+      await loadMedia();
+    } catch (err) {
+      setError(err.message || 'Unable to delete media item.');
     }
   };
 
@@ -96,7 +117,10 @@ function MediaManagementPage() {
 
       <div className="admin-grid admin-grid-two-columns">
         <section className="glass-card admin-panel-card">
-          <h2>Upload media</h2>
+          <div className="panel-header">
+            <h2>Upload media</h2>
+            <span className="admin-badge">Public media</span>
+          </div>
           <form onSubmit={handleUpload} className="admin-form">
             <label>
               File
@@ -108,11 +132,17 @@ function MediaManagementPage() {
             </label>
             <label>
               Category
-              <input type="text" value={form.category} onChange={(event) => setForm({ ...form, category: event.target.value })} />
+              <select value={form.category} onChange={(event) => setForm({ ...form, category: event.target.value })}>
+                {categoryOptions.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
             </label>
             <label>
               Tags
-              <input type="text" value={form.tags} onChange={(event) => setForm({ ...form, tags: event.target.value })} placeholder="comma-separated" />
+              <input type="text" value={form.tags} onChange={(event) => setForm({ ...form, tags: event.target.value })} placeholder="optional" />
             </label>
             <label>
               Type
@@ -120,8 +150,15 @@ function MediaManagementPage() {
                 <option value="image">Image</option>
                 <option value="video">Video</option>
                 <option value="pdf">PDF</option>
-                <option value="media">Other</option>
               </select>
+            </label>
+            <label className="admin-switch">
+              <input
+                type="checkbox"
+                checked={form.active}
+                onChange={(event) => setForm({ ...form, active: event.target.checked })}
+              />
+              <span>{form.active ? 'Will be active' : 'Will be inactive'}</span>
             </label>
             {error ? <div className="admin-alert admin-alert-error">{error}</div> : null}
             {message ? <div className="admin-alert admin-alert-success">{message}</div> : null}
@@ -144,12 +181,17 @@ function MediaManagementPage() {
                   <li key={item.id} className="admin-list-item admin-media-item">
                     <div>
                       <strong>{item.title}</strong>
-                      <p>{item.type} • {item.category}</p>
+                      <p>{item.type} / {item.category}</p>
                       <a href={item.url} target="_blank" rel="noreferrer">View file</a>
                     </div>
-                    <button type="button" className="admin-button admin-button-secondary" onClick={() => handleToggleActive(item)}>
-                      {item.active ? 'Archive' : 'Publish'}
-                    </button>
+                    <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                      <button type="button" className="admin-button admin-button-secondary" onClick={() => handleToggleActive(item)}>
+                        {item.active ? 'Deactivate' : 'Activate'}
+                      </button>
+                      <button type="button" className="admin-button admin-button-secondary" onClick={() => handleDelete(item)}>
+                        Delete
+                      </button>
+                    </div>
                   </li>
                 ))
               )}

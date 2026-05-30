@@ -56,6 +56,14 @@ export function saveGalleryEntity(payload, options = {}) {
   });
 }
 
+export function deleteGalleryEntity(payload, options = {}) {
+  return fetchJson('content/gallery.php', {
+    method: 'POST',
+    body: JSON.stringify({ ...payload, action: 'delete' }),
+    ...options,
+  });
+}
+
 export function fetchAbstracts() {
   return fetchJson('content/abstracts.php');
 }

@@ -19,7 +19,8 @@ function AboutCMSPage() {
     try {
       const response = await fetchPageBlocks(pageKey);
       setBlocks(response.data || []);
-      setActiveBlock(response.data?.[0] ?? null);
+      const firstBlock = response.data?.[0] ?? null;
+      setActiveBlock(firstBlock);
     } catch (err) {
       setError(err.message || 'Unable to load about page content.');
     } finally {
@@ -51,10 +52,8 @@ function AboutCMSPage() {
         {
           id: activeBlock?.id,
           page_key: pageKey,
-          block_key: activeBlock?.block_key,
           title: activeBlock?.title || '',
           content: { body: activeBlock?.content?.body ?? '' },
-          metadata: activeBlock?.metadata ?? {},
           order: activeBlock?.order ?? 0,
           active: activeBlock?.active ?? true,
         },
@@ -69,6 +68,26 @@ function AboutCMSPage() {
     }
   };
 
+  const handleSelect = (block) => {
+    setActiveBlock(block);
+    setMessage('');
+  };
+
+  const handleNewBlock = () => {
+    const nextOrder = blocks.length > 0
+      ? Math.max(...blocks.map((block) => Number(block.order) || 0)) + 1
+      : 0;
+
+    setActiveBlock({
+      id: null,
+      title: '',
+      content: { body: '' },
+      order: nextOrder,
+      active: true,
+    });
+    setMessage('');
+  };
+
   return (
     <div className="admin-page-shell">
       <div className="page-heading-row">
@@ -77,6 +96,9 @@ function AboutCMSPage() {
           <h1 className="page-title">About page CMS</h1>
           <p className="page-copy">Update institute, host city, and mission sections with live content blocks.</p>
         </div>
+        <button type="button" className="admin-button admin-button-secondary" onClick={handleNewBlock}>
+          Add block
+        </button>
       </div>
       <div className="admin-grid admin-grid-two-columns">
         <section className="glass-card admin-panel-card">
@@ -92,7 +114,7 @@ function AboutCMSPage() {
               ) : (
                 blocks.map((block) => (
                   <li key={block.id} className={`admin-list-item ${activeBlock?.id === block.id ? 'active' : ''}`}>
-                    <button type="button" className="admin-link-button" onClick={() => setActiveBlock(block)}>
+                    <button type="button" className="admin-link-button" onClick={() => handleSelect(block)}>
                       {block.title || block.block_key}
                     </button>
                     <span className="admin-badge">{block.active ? 'Visible' : 'Hidden'}</span>

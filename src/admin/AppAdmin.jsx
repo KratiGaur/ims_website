@@ -21,7 +21,7 @@ import './styles/admin.css';
 function AppAdmin() {
   return (
     <AuthProvider>
-      <Suspense fallback={<div className="admin-loading">Loading admin panel…</div>}>
+      <Suspense fallback={<div className="admin-loading">Loading admin panel...</div>}>
         <Routes>
           <Route path="login" element={<LoginPage />} />
           <Route path="" element={<AdminLayout />}>
