@@ -142,6 +142,19 @@ export default function AboutYROC2027() {
           </div>
 
           <div className="about-yroc-layout" style={{ marginTop: 22 }}>
+            <div className="about-yroc-image" style={{ flex: '0 0 42%', minWidth: 280 }}>
+              <div className="section-card" style={{ padding: 12, background: 'transparent', borderRadius: 22 }}>
+                <img
+                  src={activeEvent?.image}
+                  alt={activeEvent?.title ?? 'YROC Past Event'}
+                  className="about-yroc-img"
+                  onError={(e) => {
+                    e.currentTarget.src = '/hero.png';
+                  }}
+                />
+              </div>
+            </div>
+
             <div className="about-yroc-writeup" style={{ paddingRight: 16 }}>
               {formatBody(activeEvent?.body ?? '').map((line, idx) => {
                 if (!line) return <div key={idx} style={{ height: 10 }} />;
@@ -159,19 +172,6 @@ export default function AboutYROC2027() {
                   </p>
                 );
               })}
-            </div>
-
-            <div className="about-yroc-image" style={{ flex: '0 0 42%', minWidth: 280 }}>
-              <div className="section-card" style={{ padding: 12, background: 'transparent', borderRadius: 22 }}>
-                <img
-                  src={activeEvent?.image}
-                  alt={activeEvent?.title ?? 'YROC Past Event'}
-                  className="about-yroc-img"
-                  onError={(e) => {
-                    e.currentTarget.src = '/hero.png';
-                  }}
-                />
-              </div>
             </div>
           </div>
         </div>

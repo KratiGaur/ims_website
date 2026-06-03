@@ -359,38 +359,61 @@ export default function AboutIMS() {
               </div>
             </div>
 
-            <div className="about-yroc-layout" style={{ marginTop: 22, display: 'grid', gridTemplateColumns: '1fr 0.9fr', gap: 16, alignItems: 'start' }}>
-              <div className="about-yroc-writeup" style={{ paddingRight: 16 }}>
+            <div
+              className="about-yroc-layout about-yroc-layout--past-sessions"
+              style={{ marginTop: 22 }}
+            >
+              <div className="about-yroc-image">
+                <div className="section-card" style={{ padding: 12, background: 'transparent', borderRadius: 22 }}>
+                  <img
+                    src={activeEvent?.image}
+                    alt={activeEvent?.title ?? 'YROC Past Event'}
+                    className="about-yroc-img"
+                    onError={(e) => {
+                      e.currentTarget.src = '/hero.png';
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div className="about-yroc-writeup">
                 {formatBody(activeEvent?.body ?? '').map((line, idx) => {
                   if (!line) return <div key={idx} style={{ height: 10 }} />;
                   if (line.startsWith('•')) {
                     return (
                       <div key={idx} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', marginBottom: 10 }}>
                         <span style={{ color: 'var(--accent)', fontWeight: 900, minWidth: 10 }}>{'•'}</span>
-                        <p style={{ margin: 0, color: 'var(--text-secondary)', lineHeight: 1.85, whiteSpace: 'pre-wrap' }}>{line.replace(/^•\s*/, '')}</p>
+                        <p
+                          style={{
+                            margin: 0,
+                            color: 'var(--text-secondary)',
+                            lineHeight: 1.85,
+                            whiteSpace: 'pre-wrap',
+                            wordBreak: 'break-word',
+                            overflowWrap: 'anywhere'
+                          }}
+                        >
+                          {line.replace(/^•\s*/, '')}
+                        </p>
                       </div>
                     );
                   }
                   return (
-                    <p key={idx} style={{ margin: '0 0 12px', color: 'var(--text-secondary)', lineHeight: 1.85, whiteSpace: 'pre-wrap' }}>
+                    <p
+                      key={idx}
+                      style={{
+                        margin: '0 0 12px',
+                        color: 'var(--text-secondary)',
+                        lineHeight: 1.85,
+                        whiteSpace: 'pre-wrap',
+                        wordBreak: 'break-word',
+                        overflowWrap: 'anywhere'
+                      }}
+                    >
                       {line}
                     </p>
                   );
                 })}
-              </div>
-
-              <div className="about-yroc-image" style={{ flex: '0 0 42%', minWidth: 280 }}>
-                <div className="section-card" style={{ padding: 12, background: 'transparent', borderRadius: 22 }}>
-                  <img
-                    src={activeEvent?.image}
-
-                    alt={activeEvent?.title ?? 'YROC Past Event'}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 18, display: 'block' }}
-                    onError={(e) => {
-                      e.currentTarget.src = '/hero.png';
-                    }}
-                  />
-                </div>
               </div>
             </div>
           </div>

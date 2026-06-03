@@ -1,6 +1,6 @@
 import React, { useEffect, useState, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -17,8 +17,9 @@ import Contact from './pages/Contact';
 import Media from './pages/Media';
 import Gallery from './pages/Gallery';
 
+import WelcomeSplash from './components/WelcomeSplash';
+import Chatbot from './components/Chatbot';
 const AdminApp = lazy(() => import('./admin/AppAdmin'));
-/* WelcomeSplash removed: splash flow disabled by request */
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -43,12 +44,14 @@ function AnimatedRoutes() {
 }
 
 function App() {
-  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
+  const [showSplash, setShowSplash] = useState(() => {
+    return !sessionStorage.getItem('yroc_intro_played');
+  });
 
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
-  }, [theme]);
+    document.documentElement.setAttribute('data-theme', 'light');
+    localStorage.setItem('theme', 'light');
+  }, []);
 
   useEffect(() => {
     const onScroll = () => {
@@ -59,24 +62,50 @@ function App() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
+  useEffect(() => {
+    if (showSplash) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [showSplash]);
+
+  const handleSplashComplete = () => {
+    sessionStorage.setItem('yroc_intro_played', 'true');
+    setShowSplash(false);
   };
 
   return (
     <Router>
-      <Navbar theme={theme} onToggleTheme={toggleTheme} />
-      <div className="page-content">
-        <Routes>
-          <Route path="/admin/*" element={
-            <Suspense fallback={<div className="admin-loading">Loading admin panel...</div>}>
-              <AdminApp />
-            </Suspense>
-          } />
-          <Route path="/*" element={<AnimatedRoutes />} />
-        </Routes>
-      </div>
-      <Footer />
+      <AnimatePresence mode="wait">
+        {showSplash ? (
+          <WelcomeSplash onComplete={handleSplashComplete} key="splash" />
+        ) : (
+          <motion.div
+            key="content"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+          >
+            <Navbar />
+            <div className="page-content">
+              <Routes>
+                <Route path="/admin/*" element={
+                  <Suspense fallback={<div className="admin-loading">Loading admin panel...</div>}>
+                    <AdminApp />
+                  </Suspense>
+                } />
+                <Route path="/*" element={<AnimatedRoutes />} />
+              </Routes>
+            </div>
+            <Footer />
+            <Chatbot />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </Router>
   );
 }

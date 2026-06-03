@@ -1,14 +1,19 @@
-# TODO - Phase B (Admin Hardening)
+# TODO
 
-- [x] Create/adjust centralized admin CSRF header attachment in `src/admin/services/api.js` (token sourced from AuthContext/session).
+- [ ] Update YROC 2027 invitation “book flip” after the existing letter-open animation completes (do not disturb the envelope/letter open flow).
 
-- [x] Standardize backend CSRF rejection JSON to exact `{success:false,message:"Invalid CSRF token",errors:[]}` for state-changing requests.
+- [ ] Page sequence after open:
+  1) Cover Page
+  2) Conference Snapshot
+  3) Invitation Message
+  4) Conference Highlights
+  5) Organizing Committee
+  6) Contact + Register
+- [ ] Apply book/3D flip transition on corner swipe/click for each page.
+- [ ] Update `src/pages/Invitation.jsx` to render pages + page turn controls only after envelope is open.
+- [ ] Reuse/add CSS in `src/index.css` for the flip effect.
+- [ ] Ensure routes work: buttons navigate to `/registration` and `/contact`.
+- [ ] Add accessibility: keyboard navigation + prefers-reduced-motion fallback.
+- [ ] Quick smoke test in browser.
 
-- [x] Harden admin session cookies: Secure when HTTPS, idle timeout, consistent JSON errors.
-- [x] Regenerate session id on admin login.
-- [x] Upgrade/verify RBAC: ensure all protected endpoints enforce permission checks server-side (403 JSON).
-- [x] Harden file upload: MIME inspection, extension whitelist, randomized filenames, block executable uploads, safe upload dirs, consistent JSON.
-- [ ] Standardize admin API responses success/error shape while keeping backward compatibility for existing frontend parsing.
-- [ ] Validate active/inactive sync on public render filtering (no layout collapse) and stabilize responsive/theme consistency (minimal CSS patches).
-- [ ] Final validation: list modified files, remaining risks, endpoints requiring manual review.
 
