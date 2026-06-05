@@ -362,13 +362,27 @@ export default function Invitation() {
             </p>
             <div className="invite-committee-grid">
               <div className="invite-member-card">
-                <img src="/committee/HIMANSHI-KHATTAR.jpg" alt="Dr Himanshi Khattar" className="invite-member-photo" onError={(e) => { e.target.src = 'https://via.placeholder.com/150'; }} />
-                <h4>Dr Himanshi Khattar</h4>
+                <img
+                  src="/committee/Organizing Secretary.jpeg"
+                  alt="Organizing Secretary"
+                  className="invite-member-photo"
+                  onError={(e) => {
+                    e.target.src = '/committee/PIYUSH-KUMAR.jpg';
+                  }}
+                />
+                <h4>Organizing Secretary</h4>
                 <p>Organizing Secretary</p>
               </div>
               <div className="invite-member-card">
-                <img src="/committee/PIYUSH-KUMAR.jpg" alt="Dr Piyush Kumar" className="invite-member-photo" onError={(e) => { e.target.src = 'https://via.placeholder.com/150'; }} />
-                <h4>Dr Piyush Kumar</h4>
+                <img
+                  src="/committee/PIYUSH-KUMAR.jpg"
+                  alt="Dr Piyush Kumar"
+                  className="invite-member-photo"
+                  onError={(e) => {
+                    e.target.src = 'https://via.placeholder.com/150';
+                  }}
+                />
+                <h4>Dr. Piyush Kumar</h4>
                 <p>Organizing Chairperson</p>
               </div>
             </div>
@@ -385,7 +399,7 @@ export default function Invitation() {
                 <strong>Phone:</strong> 7310604738
               </p>
               <p style={{ margin: 0, fontSize: '0.95rem', color: 'var(--text-secondary)' }}>
-                <strong>Email:</strong> To be updated
+                <strong>Email:</strong> yroc2027bareilly@srmsims.ac.in
               </p>
             </div>
             <div className="invite-contact-actions">

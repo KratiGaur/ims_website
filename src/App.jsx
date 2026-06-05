@@ -19,6 +19,7 @@ import Gallery from './pages/Gallery';
 
 import WelcomeSplash from './components/WelcomeSplash';
 import Chatbot from './components/Chatbot';
+import MascotTransition from './components/MascotTransition';
 const AdminApp = lazy(() => import('./admin/AppAdmin'));
 
 function AnimatedRoutes() {
@@ -47,6 +48,7 @@ function App() {
   const [showSplash, setShowSplash] = useState(() => {
     return !sessionStorage.getItem('yroc_intro_played');
   });
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', 'light');
@@ -63,7 +65,8 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (showSplash) {
+    // Keep scrolling disabled while splash or transition overlay is active
+    if (showSplash || isTransitioning) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
@@ -71,11 +74,14 @@ function App() {
     return () => {
       document.body.style.overflow = '';
     };
-  }, [showSplash]);
+  }, [showSplash, isTransitioning]);
 
   const handleSplashComplete = () => {
     sessionStorage.setItem('yroc_intro_played', 'true');
+    // Unmount the splash and start the mascot transition which will
+    // reveal the homepage behind a blur and morph into the chatbot.
     setShowSplash(false);
+    setIsTransitioning(true);
   };
 
   return (
@@ -88,21 +94,33 @@ function App() {
             key="content"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
+            transition={{ duration: 0.8, ease: 'easeOut' }}
           >
             <Navbar />
+            {/* Hide the normal Chatbot while the mascot transition runs */}
+            {!isTransitioning && <Chatbot />}
             <div className="page-content">
               <Routes>
-                <Route path="/admin/*" element={
-                  <Suspense fallback={<div className="admin-loading">Loading admin panel...</div>}>
-                    <AdminApp />
-                  </Suspense>
-                } />
+                <Route
+                  path="/admin/*"
+                  element={
+                    <Suspense fallback={<div className="admin-loading">Loading admin panel...</div>}>
+                      <AdminApp />
+                    </Suspense>
+                  }
+                />
                 <Route path="/*" element={<AnimatedRoutes />} />
               </Routes>
             </div>
             <Footer />
-            <Chatbot />
+            {/* Render the mascot transition overlay on top of the homepage when active */}
+            {isTransitioning && (
+              <MascotTransition
+                onFinish={() => {
+                  setIsTransitioning(false);
+                }}
+              />
+            )}
           </motion.div>
         )}
       </AnimatePresence>
@@ -111,3 +129,4 @@ function App() {
 }
 
 export default App;
+

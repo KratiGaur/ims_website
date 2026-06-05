@@ -55,20 +55,21 @@ export function parseDifyResponse(response: string): MascotResponse[] {
 
   // Fallback keyword routing
   const lowercase = cleaned.toLowerCase();
-  const isTravelOrAccom = lowercase.includes('travel') || 
-                          lowercase.includes('accommodation') || 
-                          lowercase.includes('bareilly') || 
-                          lowercase.includes('hotel') || 
-                          lowercase.includes('transport') || 
-                          lowercase.includes('stay') || 
-                          lowercase.includes('venue') ||
-                          lowercase.includes('flight') ||
-                          lowercase.includes('train') ||
-                          lowercase.includes('map') ||
-                          lowercase.includes('location') ||
-                          lowercase.includes('taxi') ||
-                          lowercase.includes('cab');
-                          
+  const isTravelOrAccom =
+    lowercase.includes('travel') ||
+    lowercase.includes('accommodation') ||
+    lowercase.includes('bareilly') ||
+    lowercase.includes('hotel') ||
+    lowercase.includes('transport') ||
+    lowercase.includes('stay') ||
+    lowercase.includes('venue') ||
+    lowercase.includes('flight') ||
+    lowercase.includes('train') ||
+    lowercase.includes('map') ||
+    lowercase.includes('location') ||
+    lowercase.includes('taxi') ||
+    lowercase.includes('cab');
+
   const sender = isTravelOrAccom ? 'nyra' : 'neo';
   return [{ sender, text: cleaned }];
 }
@@ -107,6 +108,7 @@ export default function Chatbot() {
     if (isOpen) {
       scrollToBottom();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages, isLoading, isOpen]);
 
   // Handle tooltip timing
@@ -182,7 +184,7 @@ export default function Chatbot() {
 
     try {
       const response = await sendChatMessage(userMsgText, conversationId);
-      
+
       // Store conversation ID for maintaining context
       if (response.conversation_id) {
         setConversationId(response.conversation_id);
@@ -190,7 +192,7 @@ export default function Chatbot() {
 
       // Parse the response for mascot routing
       const mascotReplies = parseDifyResponse(response.answer);
-      
+
       // Add each parsed reply to the message log
       setMessages((prev) => [
         ...prev,
@@ -204,10 +206,19 @@ export default function Chatbot() {
     } catch (err: unknown) {
       console.error(err);
       const message = err instanceof Error ? err.message : 'Unknown error';
-      setError(message.includes('API')
-        ? `Service error: ${message}`
-        : "I'm having trouble connecting. Please check your connection and try again."
-      );
+      if (
+  message.includes('RESOURCE_EXHAUSTED') ||
+  message.includes('429') ||
+  message.includes('quota')
+) {
+  setError(
+    'Neo & Nyra are receiving many requests right now. Please try again in a minute.'
+  );
+} else {
+  setError(
+    "I'm having trouble connecting. Please check your connection and try again."
+  );
+}
     } finally {
       setIsLoading(false);
       sendingRef.current = false;
@@ -293,14 +304,12 @@ export default function Chatbot() {
               transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
             >
               <div className="relative flex items-center justify-center w-16 h-16 bg-white dark:bg-purple-950/90 rounded-full overflow-hidden">
-                {/* Neo Mascot overlapping left */}
                 <img
                   src="/neo.png"
                   alt="Neo Guide"
                   loading="lazy"
                   className="absolute left-1 w-10 h-10 object-contain hover:scale-110 transition-transform duration-200 z-10"
                 />
-                {/* Nyra Mascot overlapping right */}
                 <img
                   src="/nyra.png"
                   alt="Nyra Guide"
@@ -309,7 +318,6 @@ export default function Chatbot() {
                 />
               </div>
 
-              {/* Chat bubble overlay icon */}
               <div className="absolute -bottom-1 -right-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white p-1.5 rounded-full border-2 border-white dark:border-purple-950 shadow-md">
                 <MessageSquare className="w-3.5 h-3.5" />
               </div>
@@ -397,14 +405,10 @@ export default function Chatbot() {
                   <h2 className="text-2xl font-black mt-3 mb-1 bg-gradient-to-r from-purple-600 via-fuchsia-500 to-pink-600 bg-clip-text text-transparent">
                     Meet Your YROC Guides
                   </h2>
-                  <p className="text-xs text-[var(--text-secondary)]">
-                    We're here to make your YROC 2027 experience seamless.
-                  </p>
+                  <p className="text-xs text-[var(--text-secondary)]">We're here to make your YROC 2027 experience seamless.</p>
                 </div>
 
-                {/* Guides introduction */}
                 <div className="space-y-4 mb-6">
-                  {/* Neo Intro Card */}
                   <motion.div
                     className="flex gap-4 p-4 rounded-2xl bg-white/50 dark:bg-purple-950/20 border border-[var(--surface-stroke)] shadow-sm hover:shadow-md transition-all duration-200"
                     initial={{ opacity: 0, x: -10 }}
@@ -424,7 +428,6 @@ export default function Chatbot() {
                     </div>
                   </motion.div>
 
-                  {/* Nyra Intro Card */}
                   <motion.div
                     className="flex gap-4 p-4 rounded-2xl bg-white/50 dark:bg-purple-950/20 border border-[var(--surface-stroke)] shadow-sm hover:shadow-md transition-all duration-200"
                     initial={{ opacity: 0, x: 10 }}
@@ -445,14 +448,10 @@ export default function Chatbot() {
                   </motion.div>
                 </div>
 
-                {/* Quick Actions Title */}
                 <div className="mb-3">
-                  <h4 className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider pl-1">
-                    Quick Actions
-                  </h4>
+                  <h4 className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider pl-1">Quick Actions</h4>
                 </div>
 
-                {/* Quick Action Chips */}
                 <div className="grid grid-cols-2 gap-2.5 mb-6">
                   {quickActions.map((action, idx) => (
                     <motion.button
@@ -471,7 +470,6 @@ export default function Chatbot() {
                   ))}
                 </div>
 
-                {/* Start Conversation Button */}
                 <div className="mt-auto pt-4">
                   <motion.button
                     onClick={startConversation}
@@ -489,12 +487,7 @@ export default function Chatbot() {
             {/* SCREEN 2: CHAT SCREEN */}
             {step === 'chat' && (
               <>
-                {/* MESSAGES AREA */}
-                <div
-                  ref={chatContainerRef}
-                  className="flex-1 overflow-y-auto px-4 py-5 space-y-4 scrollbar-thin z-10"
-                  style={{ scrollBehavior: 'smooth' }}
-                >
+                <div ref={chatContainerRef} className="flex-1 overflow-y-auto px-4 py-5 space-y-4 scrollbar-thin z-10" style={{ scrollBehavior: 'smooth' }}>
                   {messages.map((message) => {
                     const isUser = message.sender === 'user';
                     const isNeo = message.sender === 'neo';
@@ -508,23 +501,18 @@ export default function Chatbot() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.25 }}
                       >
-                        {/* Mascot Avatar beside left messages */}
                         {!isUser && (
                           <div className="flex-shrink-0 self-end mb-1">
-                            <div className={`w-8 h-8 rounded-full border flex items-center justify-center p-0.5 shadow-sm bg-white dark:bg-purple-900 ${
-                              isNeo ? 'border-purple-300' : 'border-pink-300'
-                            }`}>
-                              <img
-                                src={isNeo ? '/neo.png' : '/nyra.png'}
-                                alt={isNeo ? 'Neo' : 'Nyra'}
-                                loading="lazy"
-                                className="w-full h-full object-contain"
-                              />
+                            <div
+                              className={`w-8 h-8 rounded-full border flex items-center justify-center p-0.5 shadow-sm bg-white dark:bg-purple-900 ${
+                                isNeo ? 'border-purple-300' : 'border-pink-300'
+                              }`}
+                            >
+                              <img src={isNeo ? '/neo.png' : '/nyra.png'} alt={isNeo ? 'Neo' : 'Nyra'} loading="lazy" className="w-full h-full object-contain" />
                             </div>
                           </div>
                         )}
 
-                        {/* Message Box */}
                         <div
                           className={`px-4 py-3 rounded-2xl shadow-sm text-sm leading-relaxed ${
                             isUser
@@ -532,18 +520,17 @@ export default function Chatbot() {
                               : 'bg-white/80 dark:bg-purple-950/40 border border-[var(--surface-stroke)] text-[var(--text-primary)] rounded-bl-none'
                           }`}
                         >
-                          {/* Mascot Name Header inside bubble */}
                           {!isUser && (
-                            <span className={`text-[10px] font-black uppercase tracking-wider block mb-1 ${
-                              isNeo ? 'text-purple-600 dark:text-purple-400' : 'text-pink-600 dark:text-pink-400'
-                            }`}>
+                            <span
+                              className={`text-[10px] font-black uppercase tracking-wider block mb-1 ${
+                                isNeo ? 'text-purple-600 dark:text-purple-400' : 'text-pink-600 dark:text-pink-400'
+                              }`}
+                            >
                               {isNeo ? 'Neo' : 'Nyra'}
                             </span>
                           )}
                           <div className="whitespace-pre-line font-medium text-[13px]">{message.text}</div>
-                          <span className={`text-[9px] block text-right mt-1.5 ${
-                            isUser ? 'text-purple-200' : 'text-[var(--text-secondary)]'
-                          }`}>
+                          <span className={`text-[9px] block text-right mt-1.5 ${isUser ? 'text-purple-200' : 'text-[var(--text-secondary)]'}`}>
                             {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                           </span>
                         </div>
@@ -551,13 +538,8 @@ export default function Chatbot() {
                     );
                   })}
 
-                  {/* LOADING / TYPING INDICATOR */}
                   {isLoading && (
-                    <motion.div
-                      className="flex gap-2.5 max-w-[85%] mr-auto"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                    >
+                    <motion.div className="flex gap-2.5 max-w-[85%] mr-auto" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                       <div className="flex-shrink-0 self-end mb-1">
                         <div className="w-8 h-8 rounded-full border border-purple-300 bg-white dark:bg-purple-900 flex items-center justify-center p-0.5 shadow-sm">
                           <img src="/neo.png" alt="Neo" className="w-full h-full object-contain animate-pulse" />
@@ -571,7 +553,6 @@ export default function Chatbot() {
                     </motion.div>
                   )}
 
-                  {/* ERROR BOX */}
                   {error && (
                     <motion.div
                       className="flex items-center gap-2.5 p-3.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-xs font-semibold mx-2"
@@ -592,7 +573,6 @@ export default function Chatbot() {
                   <div ref={messagesEndRef} />
                 </div>
 
-                {/* SUGGESTION CHIPS OVER INPUT (Shown when only welcomes are in log) */}
                 {messages.length === 2 && !isLoading && (
                   <div className="px-4 py-2 flex gap-1.5 overflow-x-auto scrollbar-none z-10">
                     {quickActions.slice(0, 3).map((action) => (
@@ -607,7 +587,6 @@ export default function Chatbot() {
                   </div>
                 )}
 
-                {/* INPUT FIELD */}
                 <div className="p-4 border-t border-[var(--surface-stroke)] bg-white/40 dark:bg-purple-950/20 backdrop-blur-md z-10 flex gap-2">
                   <div className="relative flex-1">
                     <input
@@ -637,3 +616,4 @@ export default function Chatbot() {
     </>
   );
 }
+

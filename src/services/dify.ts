@@ -61,7 +61,17 @@ export async function sendChatMessage(
       const parsed = JSON.parse(errorText);
       if (parsed.message) detail = parsed.message;
     } catch { /* not JSON, use statusText */ }
-    throw new Error(`Dify API error: ${detail}`);
+    if (
+  detail.includes('RESOURCE_EXHAUSTED') ||
+  detail.includes('429') ||
+  detail.includes('quota')
+) {
+  throw new Error(
+    'Our AI assistant is currently experiencing high demand. Please try again in a minute.'
+  );
+}
+
+throw new Error(`Dify API error: ${detail}`);
   }
 
   return response.json() as Promise<DifyMessageResponse>;

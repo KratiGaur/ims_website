@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
+import OptimizedImage from '../components/OptimizedImage.jsx';
 import { fetchPublicGalleryAlbums } from '../services/publicContent';
+
 
 const pageVariants = {
   initial: { opacity: 0, y: 20 },
@@ -184,7 +186,14 @@ export default function Gallery() {
             className="media-tile"
             style={{ margin: 0 }}
           >
-            <img src={item.src} alt={item.title} />
+            <OptimizedImage
+              src={item.src}
+              alt={item.title}
+              className="fit-cover-image"
+              loading="lazy"
+              decoding="async"
+              sizes="(max-width: 768px) 80vw, (max-width: 1024px) 33vw, 33vw"
+            />
           </MotionFigure>
         ))}
       </motion.section>

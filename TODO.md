@@ -1,19 +1,12 @@
 # TODO
 
-- [ ] Update YROC 2027 invitation “book flip” after the existing letter-open animation completes (do not disturb the envelope/letter open flow).
-
-- [ ] Page sequence after open:
-  1) Cover Page
-  2) Conference Snapshot
-  3) Invitation Message
-  4) Conference Highlights
-  5) Organizing Committee
-  6) Contact + Register
-- [ ] Apply book/3D flip transition on corner swipe/click for each page.
-- [ ] Update `src/pages/Invitation.jsx` to render pages + page turn controls only after envelope is open.
-- [ ] Reuse/add CSS in `src/index.css` for the flip effect.
-- [ ] Ensure routes work: buttons navigate to `/registration` and `/contact`.
-- [ ] Add accessibility: keyboard navigation + prefers-reduced-motion fallback.
-- [ ] Quick smoke test in browser.
+- [x] Inspect current React committee page data structure (src/pages/Committee.jsx) and PHP committee page(s) to ensure React-only changes.
+- [x] Update member ordering on React committee page:
+  - National committee section: reorder into 5 rows as provided (1; 2; 3; 4; 1).
+  - Ensure correct names/roles match the request.
+- [x] Add/insert State Executive Committee section in React before Organizing Committee (and keep styling/media scaling preserved).
+- [x] Ensure Organizing Committee remains last and matches existing layout.
+- [x] Revert/confirm any accidental PHP changes are not reflected (do not change PHP for this task).
+- [x] Run build/dev check (npm run build) to ensure no React/JS errors.
 
 
