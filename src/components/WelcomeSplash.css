@@ -1,0 +1,109 @@
+.splash-screen {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 100svh;
+  overflow: hidden;
+  z-index: 9999;
+  opacity: 1;
+  background:
+    radial-gradient(circle at 22% 12%, rgba(168, 85, 247, 0.24), transparent 28%),
+    radial-gradient(circle at 78% 68%, rgba(244, 114, 182, 0.24), transparent 34%),
+    linear-gradient(135deg, #fff7ff 0%, #f8fbff 48%, #f7e8ff 100%);
+  transition: opacity 0.8s ease;
+}
+
+.splash-screen.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.dna-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.splash-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 46% 47%, rgba(32, 242, 255, 0.12), transparent 28%),
+    radial-gradient(circle at 50% 50%, transparent 0 38%, rgba(57, 26, 86, 0.16) 78%),
+    linear-gradient(90deg, rgba(255, 247, 255, 0.7), transparent 33%, transparent 68%, rgba(255, 247, 255, 0.56));
+  mix-blend-mode: screen;
+}
+
+.splash-copy {
+  position: absolute;
+  left: clamp(18px, 6vw, 74px);
+  bottom: clamp(28px, 7vw, 82px);
+  width: min(470px, calc(100vw - 36px));
+  color: #f8fbff;
+  text-shadow: 0 12px 34px rgba(168, 85, 247, 0.2);
+  animation: splashCopyRise 1s ease both;
+}
+
+.splash-kicker {
+  display: block;
+  margin-bottom: 10px;
+  color: rgba(124, 58, 237, 0.82);
+  font-size: clamp(0.72rem, 1.6vw, 0.88rem);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+.splash-copy h1 {
+  margin: 0;
+  font-size: clamp(3.2rem, 11vw, 7.8rem);
+  font-weight: 800;
+  line-height: 0.88;
+  letter-spacing: 0;
+  background: linear-gradient(115deg, #391a56 0%, #a855f7 44%, #f472b6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+body.splash-active {
+  overflow: hidden;
+}
+
+@keyframes splashCopyRise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (max-width: 720px) {
+  .splash-screen {
+    background:
+      radial-gradient(circle at 50% 14%, rgba(168, 85, 247, 0.26), transparent 32%),
+      radial-gradient(circle at 68% 70%, rgba(244, 114, 182, 0.2), transparent 36%),
+      linear-gradient(145deg, #fff7ff 0%, #f8fbff 55%, #f7e8ff 100%);
+  }
+
+  .splash-copy {
+    left: 18px;
+    right: 18px;
+    bottom: 32px;
+    width: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splash-copy {
+    animation: none;
+  }
+}

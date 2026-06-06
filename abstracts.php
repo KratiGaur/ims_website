@@ -22,7 +22,7 @@ include 'header.php';
 
     <h3 class="mt-4 mb-3">Important Dates</h3>
     <div class="row g-3">
-      <div class="col-md-4"><div class="glass-card p-3"><strong>Abstract Deadline</strong><br />10 June 2026</div></div>
+      <div class="col-md-4"><div class="glass-card p-3"><strong>Abstract Deadline</strong><br />20 December 2026</div></div>
       <div class="col-md-4"><div class="glass-card p-3"><strong>Acceptance Intimation</strong><br />20 June 2026</div></div>
       <div class="col-md-4"><div class="glass-card p-3"><strong>Final Paper & Registration</strong><br />30 June 2026</div></div>
     </div>

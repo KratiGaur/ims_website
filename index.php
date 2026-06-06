@@ -5,11 +5,11 @@ include 'header.php';
 ?>
 
 <section class="text-center py-5" data-aos="fade-up">
-  <span class="inline-block px-4 py-2 rounded-full bg-violet-500/20 border border-violet-300/30 text-violet-200 text-sm mb-4">Young Radiation Oncology Conference | 2027</span>
-  <h1 class="display-4 fw-bold brand-font mb-3">YROC (Young Radiation Oncology Conference) 2027</h1>
-  <p class="fs-4 gradient-text fw-semibold mb-3">Theme: Cancer Care Continuum - Preventive, Personalized, Precision, Palliative</p>
-  <p class="mx-auto text-slate-300" style="max-width: 860px;">
-    YROC 2027 brings together clinicians, academicians, researchers, and young oncology professionals on one platform to strengthen the full continuum of cancer care through dialogue, learning, and collaboration.
+  <h1 class="display-1 fw-bold brand-font mb-4 text-white">YROC</h1>
+  <p class="text-violet-200 text-uppercase fw-bold mb-3" style="letter-spacing: 4px; font-size: 1.1rem;">THEME: CANCER CARE CONTINUUM</p>
+  <p class="fs-4 text-info fw-semibold mb-4">Preventive. Personalized. Precision. Palliative.</p>
+  <p class="mx-auto text-slate-300 fs-5 mb-4" style="max-width: 760px; line-height: 1.8;">
+    YROC 2027 connects learning, technology, and compassion across every stage of cancer care.
   </p>
   <div class="d-flex flex-wrap justify-content-center gap-3 mt-4">
     <a href="registration.php" class="btn btn-info btn-glow px-4 py-2 rounded-pill fw-semibold">Register Now</a>

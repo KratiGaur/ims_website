@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
-export default function Navbar({ theme, onToggleTheme }) {
+export default function Navbar({ logos = [] }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState(null);
 
   useEffect(() => {
     document.body.classList.toggle('menu-open', isMenuOpen);
@@ -12,15 +13,20 @@ export default function Navbar({ theme, onToggleTheme }) {
     };
   }, [isMenuOpen]);
 
+  const closeMenus = () => {
+    setIsMenuOpen(false);
+    setOpenDropdown(null);
+  };
+
   const links = [
     { name: 'Home', path: '/' },
     {
       name: 'About',
       path: '/about',
       submenu: [
-        { name: 'About IMS', path: '/about#about-ims' },
-        { name: 'About Bareilly', path: '/about#about-bareilly' },
-        { name: 'About YROC', path: '/about#about-yroc' }
+        { name: 'About IMS', path: '/about' },
+        { name: 'About Bareilly', path: '/about/bareilly' },
+        { name: 'About YROC', path: '/about/yroc' }
       ]
     },
     { name: 'Invitation', path: '/invitation' },
@@ -29,96 +35,80 @@ export default function Navbar({ theme, onToggleTheme }) {
     { name: 'Media', path: '/media' },
     { name: 'Gallery', path: '/gallery' },
     { name: 'Register', path: '/registration' },
-    { name: 'Contact', path: '/contact' }
+    { name: 'Events', path: '/events' },
+    { name: 'Accommodation', path: '/accommodation' }
   ];
 
   return (
-    <nav className="glass-nav nav-shell">
-      <NavLink
-        to="/"
-        onClick={() => setIsMenuOpen(false)}
-        style={{ fontWeight: 700, fontSize: '1.2rem', letterSpacing: '2px' }}
-      >
-        <span className="gradient-text">YROC '27</span>
-      </NavLink>
+    <header className="unified-sticky-header">
+      <div className="top-logo-bar" aria-label="Conference partner logos">
+        <div className="top-logo-bar-inner content-shell">
+          {logos.map((logo, index) => {
+            const src = typeof logo === 'string' ? logo : logo?.src;
+            const alt = typeof logo === 'string' ? `Logo ${index + 1}` : logo?.alt || `Partner logo ${index + 1}`;
 
-      <button
-        type="button"
-        className="menu-toggle"
-        onClick={() => setIsMenuOpen((prev) => !prev)}
-        aria-label="Toggle menu"
-      >
-        {isMenuOpen ? 'Close' : 'Menu'}
-      </button>
+            return (
+              <div key={src || index} className="top-logo-slot">
+                {src && <img src={src} alt={alt} />}
+              </div>
+            );
+          })}
+        </div>
+      </div>
 
-      <div className={`nav-links ${isMenuOpen ? 'open' : ''}`}>
-        {links.map((link) => (
-          link.submenu ? (
-            <div key={link.name} className="nav-item nav-dropdown">
+      <nav className="glass-nav nav-shell">
+        <div className={`nav-links ${isMenuOpen ? 'open' : ''}`}>
+          {links.map((link) => (
+            link.submenu ? (
+              <div
+                key={link.name}
+                className={`nav-item nav-dropdown ${openDropdown === link.name ? 'open' : ''}`}
+                onMouseEnter={() => setOpenDropdown(link.name)}
+                onMouseLeave={() => setOpenDropdown(null)}
+              >
+                <button
+                  type="button"
+                  className="nav-dropdown-trigger"
+                  onClick={() => setOpenDropdown((current) => (current === link.name ? null : link.name))}
+                >
+                  {link.name}
+                </button>
+                <div className="dropdown-menu">
+                  {link.submenu.map((item) => (
+                    <NavLink
+                      key={item.name}
+                      to={item.path}
+                      onClick={closeMenus}
+                      className="dropdown-link"
+                    >
+                      {item.name}
+                    </NavLink>
+                  ))}
+                </div>
+              </div>
+            ) : (
               <NavLink
+                key={link.name}
                 to={link.path}
-                onClick={() => setIsMenuOpen(false)}
-                style={({ isActive }) => ({
-                  fontSize: '0.9rem',
-                  textTransform: 'uppercase',
-                  letterSpacing: '1px',
-                  fontWeight: 500,
-                  color: isActive ? 'var(--accent)' : 'var(--text-secondary)',
-                  textShadow: isActive ? '0 0 18px rgba(168, 85, 247, 0.35)' : 'none',
-                  transition: 'color 0.3s ease, text-shadow 0.3s ease'
-                })}
+                onClick={closeMenus}
+                className="nav-link-item"
               >
                 {link.name}
               </NavLink>
-              <div className="dropdown-menu">
-                {link.submenu.map((item) => (
-                  <NavLink
-                    key={item.name}
-                    to={item.path}
-                    onClick={() => setIsMenuOpen(false)}
-                    className="dropdown-link"
-                    style={({ isActive }) => ({
-                      fontSize: '0.85rem',
-                      textTransform: 'none',
-                      letterSpacing: '0.02em',
-                      fontWeight: 500,
-                      color: isActive ? 'var(--accent)' : 'var(--text-secondary)',
-                      transition: 'color 0.2s ease'
-                    })}
-                  >
-                    {item.name}
-                  </NavLink>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <NavLink
-              key={link.name}
-              to={link.path}
-              onClick={() => setIsMenuOpen(false)}
-              style={({ isActive }) => ({
-                fontSize: '0.9rem',
-                textTransform: 'uppercase',
-                letterSpacing: '1px',
-                fontWeight: 500,
-                color: isActive ? 'var(--accent)' : 'var(--text-secondary)',
-                textShadow: isActive ? '0 0 18px rgba(168, 85, 247, 0.35)' : 'none',
-                transition: 'color 0.3s ease, text-shadow 0.3s ease'
-              })}
-            >
-              {link.name}
-            </NavLink>
-          )
-        ))}
+            )
+          ))}
+        </div>
+
         <button
           type="button"
-          onClick={onToggleTheme}
-          className="theme-toggle"
-          aria-label="Toggle dark and light mode"
+          className="menu-toggle"
+          onClick={() => setIsMenuOpen((prev) => !prev)}
+          aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={isMenuOpen}
         >
-          {theme === 'light' ? 'Dark 🌙' : 'Light ☀️'}
+          {isMenuOpen ? 'X' : '☰'}
         </button>
-      </div>
-    </nav>
+      </nav>
+    </header>
   );
 }

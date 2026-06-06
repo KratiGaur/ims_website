@@ -12,7 +12,7 @@ const sectionReveal = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: 'easeOut' } }
 };
 
-export default function Gallery() {
+export default function Events() {
   return (
     <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} className="content-shell medium-shell">
       <motion.section
@@ -24,11 +24,14 @@ export default function Gallery() {
       >
         <div className="section-card neon-outline" style={{ padding: 'clamp(30px, 6vw, 60px)', maxWidth: '760px', width: '100%', textAlign: 'center' }}>
           <div style={{ marginBottom: '24px' }}>
-            <i className="fa-solid fa-images" style={{ fontSize: '4rem', color: '#06b6d4', filter: 'drop-shadow(0 0 15px rgba(6, 182, 212, 0.4))' }}></i>
+            <i className="fa-solid fa-calendar-days" style={{ fontSize: '4rem', color: '#06b6d4', filter: 'drop-shadow(0 0 15px rgba(6, 182, 212, 0.4))' }}></i>
           </div>
           <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3.5rem)', marginBottom: '20px' }}>
-            Gallery <span className="gradient-text">Section</span>
+            Conference <span className="gradient-text">Events</span>
           </h1>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '1.25rem', lineHeight: 1.6, marginBottom: '32px' }}>
+            Details about the scientific sessions, cultural programs, and workshops will be available shortly.
+          </p>
           <div style={{
             display: 'inline-flex',
             alignItems: 'center',
@@ -40,7 +43,7 @@ export default function Gallery() {
             boxShadow: '0 0 20px rgba(6, 182, 212, 0.1)'
           }}>
             <i className="fa-solid fa-clock text-cyan-400" style={{ animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite', color: '#06b6d4' }}></i>
-            <span style={{ color: '#22d3ee', fontWeight: 600, fontSize: '1.1rem' }}>Content will be updated soon</span>
+            <span style={{ color: '#22d3ee', fontWeight: 600, fontSize: '1.1rem' }}>To be Updated soon</span>
           </div>
         </div>
       </motion.section>

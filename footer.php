@@ -15,6 +15,8 @@
             <a href="invitation.php" class="text-decoration-none text-slate-200">Invitation</a>
             <a href="abstracts.php" class="text-decoration-none text-slate-200">Call for Abstracts</a>
             <a href="registration.php" class="text-decoration-none text-slate-200">Registration</a>
+            <a href="events.php" class="text-decoration-none text-slate-200">Events</a>
+            <a href="accommodation.php" class="text-decoration-none text-slate-200">Accommodation</a>
             <a href="contact.php" class="text-decoration-none text-slate-200">Contact</a>
           </div>
         </div>
@@ -36,8 +38,9 @@
     </div>
   </footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="js/loader.js"></script>
   <script>
     AOS.init({
       duration: 800,

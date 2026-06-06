@@ -17,15 +17,26 @@ import UserManagementPage from './pages/UserManagement';
 import SystemSettingsPage from './pages/SystemSettings';
 import NotFoundPage from './pages/NotFound';
 import './styles/admin.css';
+import { useAuth } from './context/AuthContext';
+
+function AdminEntry() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <div className="admin-page-loading">Checking authentication...</div>;
+  }
+
+  return <Navigate to={user ? 'dashboard' : 'login'} replace />;
+}
 
 function AppAdmin() {
   return (
     <AuthProvider>
       <Suspense fallback={<div className="admin-loading">Loading admin panel...</div>}>
         <Routes>
+          <Route index element={<AdminEntry />} />
           <Route path="login" element={<LoginPage />} />
-          <Route path="" element={<AdminLayout />}>
-            <Route index element={<DashboardPage />} />
+          <Route element={<AdminLayout />}>
             <Route path="dashboard" element={<DashboardPage />} />
             <Route path="homepage" element={<HomepageCMSPage />} />
             <Route path="about" element={<AboutCMSPage />} />

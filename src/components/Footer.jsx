@@ -7,6 +7,8 @@ const links = [
   { label: 'Invitation', to: '/invitation' },
   { label: 'Abstracts', to: '/abstract' },
   { label: 'Registration', to: '/registration' },
+  { label: 'Events', to: '/events' },
+  { label: 'Accommodation', to: '/accommodation' },
   { label: 'Contact', to: '/contact' }
 ];
 

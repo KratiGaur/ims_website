@@ -46,7 +46,7 @@ export default function Committee() {
               <motion.div
                 key={member.name}
                 whileHover={{ y: -5, borderColor: 'rgba(188, 163, 213, 0.5)' }}
-                className="committee-card"
+                className="committee-card cinematic-hover-card"
               >
                 <img
                   src={member.image}

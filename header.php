@@ -16,6 +16,7 @@ $currentPage = $currentPage ?? "home";
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="css/loader.css" />
 
   <style>
     :root {
@@ -94,7 +95,8 @@ $currentPage = $currentPage ?? "home";
     }
   </style>
 </head>
-<body>
+<body class="splash-active">
+  <?php include 'splash-screen.php'; ?>
   <header class="sticky-top" style="z-index: 1050;">
     <nav class="navbar navbar-expand-lg glass-card mx-2 mx-md-4 mt-3 px-3 px-md-4 py-2">
       <a class="navbar-brand brand-font text-white fw-bold fs-4" href="index.php">
@@ -112,9 +114,10 @@ $currentPage = $currentPage ?? "home";
           <li class="nav-item"><a class="nav-link <?php echo $currentPage === 'invitation' ? 'active' : ''; ?>" href="invitation.php">Invitation</a></li>
           <li class="nav-item"><a class="nav-link <?php echo $currentPage === 'abstracts' ? 'active' : ''; ?>" href="abstracts.php">Abstracts</a></li>
           <li class="nav-item"><a class="nav-link <?php echo $currentPage === 'registration' ? 'active' : ''; ?>" href="registration.php">Registration</a></li>
+          <li class="nav-item"><a class="nav-link <?php echo $currentPage === 'events' ? 'active' : ''; ?>" href="events.php">Events</a></li>
+          <li class="nav-item"><a class="nav-link <?php echo $currentPage === 'accommodation' ? 'active' : ''; ?>" href="accommodation.php">Accommodation</a></li>
           <li class="nav-item"><a class="nav-link <?php echo $currentPage === 'sponsors' ? 'active' : ''; ?>" href="sponsors.php">Sponsors</a></li>
           <li class="nav-item"><a class="nav-link <?php echo $currentPage === 'brochure' ? 'active' : ''; ?>" href="brochure.php">Brochure</a></li>
-          <li class="nav-item"><a class="nav-link <?php echo $currentPage === 'contact' ? 'active' : ''; ?>" href="contact.php">Contact</a></li>
         </ul>
       </div>
     </nav>
