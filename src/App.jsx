@@ -21,7 +21,7 @@ import Contact from './pages/Contact';
 import Media from './pages/Media';
 import Gallery from './pages/Gallery';
 
-import WelcomeSplash from './components/WelcomeSplash';
+
 import Chatbot from './components/Chatbot';
 import MascotTransition from './components/MascotTransition';
 const AdminApp = lazy(() => import('./admin/AppAdmin'));
