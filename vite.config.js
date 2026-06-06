@@ -30,6 +30,12 @@ export default defineConfig({
         target: 'http://localhost',
         changeOrigin: true,
         rewrite: (path) => `/yroc13-website${path}`
+      },
+      '/dify-api': {
+        target: 'https://api.dify.ai',
+        changeOrigin: true,
+        secure: true,
+        rewrite: (path) => path.replace(/^\/dify-api/, '')
       }
     }
   }

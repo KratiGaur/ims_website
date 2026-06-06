@@ -1,14 +1,12 @@
-# TODO - Phase B (Admin Hardening)
+# TODO
 
-- [x] Create/adjust centralized admin CSRF header attachment in `src/admin/services/api.js` (token sourced from AuthContext/session).
+- [x] Inspect current React committee page data structure (src/pages/Committee.jsx) and PHP committee page(s) to ensure React-only changes.
+- [x] Update member ordering on React committee page:
+  - National committee section: reorder into 5 rows as provided (1; 2; 3; 4; 1).
+  - Ensure correct names/roles match the request.
+- [x] Add/insert State Executive Committee section in React before Organizing Committee (and keep styling/media scaling preserved).
+- [x] Ensure Organizing Committee remains last and matches existing layout.
+- [x] Revert/confirm any accidental PHP changes are not reflected (do not change PHP for this task).
+- [x] Run build/dev check (npm run build) to ensure no React/JS errors.
 
-- [x] Standardize backend CSRF rejection JSON to exact `{success:false,message:"Invalid CSRF token",errors:[]}` for state-changing requests.
-
-- [x] Harden admin session cookies: Secure when HTTPS, idle timeout, consistent JSON errors.
-- [x] Regenerate session id on admin login.
-- [x] Upgrade/verify RBAC: ensure all protected endpoints enforce permission checks server-side (403 JSON).
-- [x] Harden file upload: MIME inspection, extension whitelist, randomized filenames, block executable uploads, safe upload dirs, consistent JSON.
-- [ ] Standardize admin API responses success/error shape while keeping backward compatibility for existing frontend parsing.
-- [ ] Validate active/inactive sync on public render filtering (no layout collapse) and stabilize responsive/theme consistency (minimal CSS patches).
-- [ ] Final validation: list modified files, remaining risks, endpoints requiring manual review.
 
